@@ -98,6 +98,43 @@ function RisingHearts() {
   );
 }
 
+function IntroClouds() {
+  const clouds = [
+    { top: "10%", left: "-1%", scale: 0.76, delay: "0s", opacity: 0.66 },
+    { top: "16%", right: "7%", scale: 1.26, delay: "0.3s", opacity: 0.98 },
+    { top: "31%", right: "4%", scale: 0.74, delay: "1.2s", opacity: 0.88 },
+    { top: "41%", right: "7%", scale: 1.18, delay: "0.8s", opacity: 0.94 },
+    { top: "60%", right: "2%", scale: 0.78, delay: "1.8s", opacity: 0.82 },
+    { bottom: "22%", left: "-1%", scale: 0.92, delay: "1.4s", opacity: 0.72 },
+    { bottom: "15%", right: "8%", scale: 0.82, delay: "1.6s", opacity: 0.84 },
+  ];
+
+  return (
+    <>
+      {clouds.map((cloud, index) => (
+        <div
+          key={index}
+          className="intro-cloud pointer-events-none absolute"
+          style={{
+            top: cloud.top,
+            right: cloud.right,
+            left: cloud.left,
+            bottom: cloud.bottom,
+            opacity: cloud.opacity,
+            transform: `scale(${cloud.scale})`,
+            animationDelay: cloud.delay,
+          }}
+        >
+          <span className="intro-cloud-puff intro-cloud-main" />
+          <span className="intro-cloud-puff intro-cloud-left" />
+          <span className="intro-cloud-puff intro-cloud-right" />
+          <span className="intro-cloud-puff intro-cloud-tail" />
+        </div>
+      ))}
+    </>
+  );
+}
+
 export function Header({
   language,
   onLanguageChange,
@@ -237,16 +274,20 @@ export function ReferenceBirthdayIntro({ copy, language, onLanguageChange, onOpe
         };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(180deg,#f4dcef_0%,#efdcef_28%,#e8def1_58%,#cfd7f0_100%)] px-4 py-3 text-[#57446f]">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.04)_36%,rgba(160,170,224,0.06)_100%)]" />
+    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(180deg,#f6dff0_0%,#f2e0f2_18%,#e6e0f5_44%,#d5dcf6_74%,#bfd1f0_100%)] px-4 py-3 text-[#57446f]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_14%,rgba(255,255,255,0.24),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(255,231,244,0.16),transparent_24%),radial-gradient(circle_at_78%_78%,rgba(197,220,255,0.14),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.02)_38%,rgba(159,181,230,0.05)_100%)]" />
       <IntroLiveHearts />
       <RisingHearts />
       <motion.div
-        className="relative mx-auto min-h-[calc(100vh-1.5rem)] w-full max-w-[24.375rem] rounded-[2rem] border border-white/72 bg-[linear-gradient(180deg,rgba(255,251,253,0.8)_0%,rgba(251,240,247,0.78)_38%,rgba(241,233,247,0.76)_74%,rgba(230,234,248,0.78)_100%)] px-4 pb-4 pt-3 shadow-[0_22px_80px_rgba(157,145,202,0.16)] backdrop-blur-[18px]"
+        className="relative mx-auto min-h-[calc(100vh-1.5rem)] w-full max-w-[24.375rem] rounded-[2rem] border border-white/72 bg-[linear-gradient(180deg,rgba(255,250,253,0.78)_0%,rgba(250,239,247,0.74)_36%,rgba(241,234,247,0.74)_62%,rgba(227,233,248,0.78)_100%)] px-4 pb-4 pt-3 shadow-[0_24px_84px_rgba(152,151,206,0.16)] backdrop-blur-[18px]"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
       >
+        <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden rounded-[2rem]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(255,255,255,0.3),transparent_20%),radial-gradient(circle_at_82%_14%,rgba(255,233,245,0.24),transparent_18%),radial-gradient(circle_at_76%_82%,rgba(198,222,255,0.18),transparent_20%)]" />
+          <IntroClouds />
+        </div>
         <Header language={language} onLanguageChange={onLanguageChange} copy={copy} />
         <motion.div {...fadeMotion(0.1)} className="relative z-10">
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-[#d48cab]">{stageCopy.introEyebrow}</p>

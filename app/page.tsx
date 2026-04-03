@@ -304,14 +304,14 @@ function ProgressDots({ step, totalSteps }: { step: number; totalSteps: number }
   return <div className="mb-5 flex gap-2">{Array.from({ length: totalSteps }, (_, index) => <span key={index} className={`h-1.5 flex-1 rounded-full transition-all ${index < step ? "bg-[linear-gradient(90deg,#d77767,#efb19b)]" : "bg-white/75"}`} />)}</div>;
 }
 
-function PrimaryButton({ label, onClick, tone = "dark" }: { label: string; onClick: () => void; tone?: "dark" | "rose" | "light" }) {
+function PrimaryButton({ label, onClick, tone = "dark", className = "" }: { label: string; onClick: () => void; tone?: "dark" | "rose" | "light"; className?: string }) {
   const toneClass =
     tone === "rose"
       ? "bg-[linear-gradient(180deg,#d7baf6_0%,#b59de9_52%,#9785d9_100%)] text-white shadow-[0_18px_35px_rgba(157,137,214,0.28)]"
       : tone === "light"
         ? "border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(247,240,252,0.92)_100%)] text-[#74688d]"
         : "bg-[linear-gradient(180deg,#c7b3f1_0%,#a48fdd_52%,#8776cb_100%)] text-white shadow-[0_18px_35px_rgba(145,132,206,0.3)]";
-  return <button type="button" onClick={onClick} className={`rounded-[1.25rem] px-5 py-4 text-sm font-semibold transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 ${toneClass}`}>{label}</button>;
+  return <button type="button" onClick={onClick} className={`rounded-[1.25rem] px-5 py-4 text-sm font-semibold transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 ${toneClass} ${className}`}>{label}</button>;
 }
 
 function ScratchCard({ label, revealed, onReveal, language }: { label: string; revealed: boolean; onReveal: () => void; language: Language }) {
@@ -501,11 +501,8 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
               <p className="mt-3 text-sm leading-6 text-[#645875]">{t.hiddenText}</p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setOpened(true)}
-              className="envelope-pulse relative mx-auto flex h-[17.5rem] w-full items-center justify-center overflow-hidden rounded-[2.25rem] border border-white/25 bg-[radial-gradient(circle_at_center,#fff7ef_0%,#ffd8ba_12%,#8a92cf_40%,#495c9d_72%,#223066_100%)] shadow-[0_14px_40px_rgba(0,0,0,0.14),0_30px_70px_rgba(46,59,113,0.4),0_0_90px_rgba(255,208,171,0.28)]"
-              aria-label={t.openEnvelopeNoteAria}
+            <div
+              className="relative mx-auto flex h-[17.5rem] w-full items-center justify-center overflow-hidden rounded-[2.25rem] border border-white/25 bg-[radial-gradient(circle_at_center,#fff7ef_0%,#ffd8ba_12%,#8a92cf_40%,#495c9d_72%,#223066_100%)] shadow-[0_14px_40px_rgba(0,0,0,0.14),0_30px_70px_rgba(46,59,113,0.4),0_0_90px_rgba(255,208,171,0.28)]"
             >
               <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.03)_38%,rgba(9,20,60,0.16)_100%)]" />
               <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,223,184,0.34)_0%,rgba(255,223,184,0.14)_24%,transparent_50%)]" />
@@ -534,33 +531,31 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
               <div className="relative z-10 flex h-[11.8rem] w-[13.6rem] items-center justify-center">
                 <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(255,241,214,0.84),rgba(255,241,214,0.05)_72%)] blur-xl" />
 
-                <div className="relative h-[9.35rem] w-[12.2rem] overflow-hidden rounded-[1.35rem] border border-white/58 bg-[linear-gradient(180deg,rgba(255,250,247,0.98)_0%,rgba(244,232,255,0.92)_100%)] shadow-[0_22px_38px_rgba(255,236,206,0.34)]">
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.03)_100%)]" />
-
-                  <div className="absolute inset-x-5 top-3 rounded-full bg-white/72 px-3 py-2 text-center shadow-[0_10px_20px_rgba(188,161,194,0.14)]">
-                    <p className="text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[#cb8177]">{t.tapToOpen}</p>
-                    <p className="mt-1 truncate text-[0.72rem] leading-5 text-[#72637f]">{fromValue || t.fromFallback}</p>
+                <button
+                  type="button"
+                  onClick={() => setOpened(true)}
+                  aria-label={t.openEnvelopeNoteAria}
+                  className="envelope-pulse absolute left-1/2 top-1/2 flex h-[5.95rem] w-[7.15rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1rem]"
+                >
+                  <div className="absolute inset-0 rounded-[1.45rem] bg-[radial-gradient(circle_at_center,rgba(255,248,253,0.98),rgba(255,248,253,0.16)_64%,rgba(255,248,253,0)_100%)] blur-xl" />
+                  <div className="relative h-[4.15rem] w-[5.55rem] overflow-hidden rounded-[0.72rem] border border-[rgba(255,255,255,0.72)] bg-[linear-gradient(180deg,rgba(255,254,255,0.99)_0%,rgba(247,242,252,0.98)_62%,rgba(239,229,248,0.97)_100%)] shadow-[0_14px_26px_rgba(194,178,224,0.28)]">
+                    <div className="absolute inset-0 rounded-[0.72rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.03)_100%)]" />
+                    <div className="absolute inset-x-0 bottom-0 h-[44%] bg-[linear-gradient(180deg,rgba(242,234,249,0.18)_0%,rgba(230,217,244,0.62)_100%)]" />
+                    <div className="absolute left-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_100%,100%_14%,100%_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
+                    <div className="absolute right-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_14%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
+                    <div className="absolute inset-x-0 bottom-0 h-[46%] [clip-path:polygon(0_100%,50%_30%,100%_100%)] bg-[linear-gradient(180deg,rgba(240,230,249,0.3)_0%,rgba(228,214,243,0.76)_100%)]" />
+                    <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(236,226,248,0.99)_100%)]" />
+                    <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] border-b border-[rgba(214,197,233,0.44)]" />
+                    <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[rgba(217,200,235,0.55)]" />
                   </div>
-
-                  <div className="absolute left-1/2 top-[56%] h-[5.8rem] w-[8.25rem] -translate-x-1/2 -translate-y-1/2">
-                    <div className="absolute inset-0 rounded-[1rem] bg-[radial-gradient(circle_at_center,rgba(255,250,252,0.98),rgba(255,250,252,0.18)_70%,rgba(255,250,252,0)_100%)] blur-md" />
-                    <div className="relative h-full w-full overflow-hidden rounded-[1rem] border border-white/55 bg-[linear-gradient(180deg,rgba(255,253,255,0.99)_0%,rgba(242,233,249,0.97)_100%)] shadow-[0_16px_30px_rgba(201,184,228,0.28)]">
-                      <div className="absolute inset-0 rounded-[1rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0.05)_100%)]" />
-                      <div className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(180deg,rgba(239,228,248,0.9)_0%,rgba(223,205,242,0.95)_100%)]" />
-                      <div className="absolute left-0 bottom-0 h-[52%] w-1/2 [clip-path:polygon(0_100%,100%_10%,100%_100%)] bg-[linear-gradient(180deg,rgba(236,224,247,0.92)_0%,rgba(219,201,239,0.96)_100%)]" />
-                      <div className="absolute right-0 bottom-0 h-[52%] w-1/2 [clip-path:polygon(0_10%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(236,224,247,0.92)_0%,rgba(219,201,239,0.96)_100%)]" />
-                      <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(244,236,251,0.98)_100%)]" />
-                      <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_49.35%,rgba(193,177,220,0.2)_49.75%,transparent_50.15%),linear-gradient(225deg,transparent_49.35%,rgba(193,177,220,0.2)_49.75%,transparent_50.15%)]" />
-                    </div>
-                  </div>
-                </div>
+                </button>
               </div>
-            </button>
+            </div>
 
             <div className="dream-card-soft rounded-[1.5rem] p-4 text-sm leading-6 text-[#74688a]">{t.envelopeHelper}</div>
 
             <div className="mt-auto w-full">
-              <PrimaryButton label={t.envelopeFirst} onClick={() => setOpened(true)} />
+              <PrimaryButton label={t.envelopeFirst} onClick={() => setOpened(true)} className="w-full" />
             </div>
           </div>
         )}
@@ -597,7 +592,7 @@ function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext:
 
   const photoClasses = "absolute inset-0 overflow-hidden rounded-[1.6rem] border-[6px] border-white bg-white shadow-[0_18px_38px_rgba(179,143,190,0.28)] transition-all duration-700";
 
-  return <MobileShell step={4} eyebrow={t.exploreEyebrow} title={t.exploreTitle} description={t.exploreDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft relative overflow-hidden rounded-[2rem] p-4"><div className="relative mx-auto h-64 w-[11.5rem]">{memorySlides.map((slide, index) => <div key={slide.src} className={`${photoClasses} ${activePhoto === index + 1 ? "translate-y-0 scale-100 opacity-100" : "translate-y-6 scale-95 opacity-0"}`}><Image src={slide.src} alt={slide.alt} width={460} height={560} className="h-full w-full object-cover" /></div>)}</div><div className="mt-4 rounded-[1.2rem] bg-white/78 px-4 py-4 text-center shadow-[0_12px_24px_rgba(196,163,201,0.16)]"><p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#bf82ae]">{t.loveBadge}</p>{memorySlides.map((slide, index) => <p key={slide.message} className={`mt-3 text-sm leading-6 text-[#756a89] transition-all duration-500 ${activePhoto === index + 1 ? "block opacity-100" : "hidden opacity-0"}`}>{slide.message}</p>)}</div></div><PrimaryButton label={t.revealSurprise} onClick={onNext} tone="rose" /></div></MobileShell>;
+  return <MobileShell step={4} eyebrow={t.exploreEyebrow} title={t.exploreTitle} description={t.exploreDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft relative overflow-hidden rounded-[2rem] p-4"><div className="relative mx-auto h-64 w-full max-w-[14.2rem]">{memorySlides.map((slide, index) => <div key={slide.src} className={`${photoClasses} ${activePhoto === index + 1 ? "translate-y-0 scale-100 opacity-100" : "translate-y-6 scale-95 opacity-0"}`}><Image src={slide.src} alt={slide.alt} width={460} height={560} className="h-full w-full object-cover" /></div>)}</div><div className="mt-4 px-2 pb-1 text-center"><p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#bf82ae]">{t.loveBadge}</p>{memorySlides.map((slide, index) => <p key={slide.message} className={`mt-3 text-sm leading-6 text-[#756a89] transition-all duration-500 ${activePhoto === index + 1 ? "block opacity-100" : "hidden opacity-0"}`}>{slide.message}</p>)}</div></div><PrimaryButton label={t.revealSurprise} onClick={onNext} tone="rose" /></div></MobileShell>;
 }
 
 function GiftRevealScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
