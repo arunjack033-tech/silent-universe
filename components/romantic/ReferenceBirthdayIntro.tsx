@@ -249,16 +249,17 @@ export function EnvelopeCard({ onOpen, ariaLabel }: { onOpen: () => void; ariaLa
         </span>
       ))}
       <div className="absolute left-1/2 top-1/2 flex h-[5.95rem] w-[7.15rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-        <div className="absolute inset-0 rounded-[1.5rem] bg-[radial-gradient(circle_at_center,rgba(255,248,253,0.98),rgba(255,248,253,0.16)_64%,rgba(255,248,253,0)_100%)] blur-xl" />
-        <div className="relative h-[4.2rem] w-[5.72rem] overflow-hidden rounded-[0.78rem] border border-[rgba(255,255,255,0.72)] bg-[linear-gradient(180deg,rgba(255,254,255,0.99)_0%,rgba(247,242,252,0.98)_62%,rgba(239,229,248,0.97)_100%)] shadow-[0_14px_26px_rgba(194,178,224,0.28)]">
-          <div className="absolute inset-0 rounded-[0.78rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.03)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[44%] bg-[linear-gradient(180deg,rgba(242,234,249,0.18)_0%,rgba(230,217,244,0.62)_100%)]" />
-          <div className="absolute left-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_100%,100%_14%,100%_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
-          <div className="absolute right-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_14%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[46%] [clip-path:polygon(0_100%,50%_30%,100%_100%)] bg-[linear-gradient(180deg,rgba(240,230,249,0.3)_0%,rgba(228,214,243,0.76)_100%)]" />
-          <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(236,226,248,0.99)_100%)]" />
-          <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] border-b border-[rgba(214,197,233,0.44)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[rgba(217,200,235,0.55)]" />
+        <div className="absolute inset-0 rounded-[1.5rem] bg-[radial-gradient(circle_at_center,rgba(255,248,253,0.92),rgba(255,248,253,0.12)_64%,rgba(255,248,253,0)_100%)]" />
+        <div className="relative h-[4.2rem] w-[5.72rem] overflow-hidden rounded-[0.78rem] border border-[rgba(255,255,255,0.74)] bg-[linear-gradient(180deg,rgba(255,253,255,0.99)_0%,rgba(245,239,251,0.98)_64%,rgba(237,226,248,0.97)_100%)] shadow-[0_12px_22px_rgba(187,171,217,0.24)]">
+          <div className="absolute inset-0 rounded-[0.78rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.02)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(180deg,rgba(243,236,250,0.08)_0%,rgba(227,212,243,0.74)_100%)]" />
+          <div className="absolute left-0 bottom-0 h-[47%] w-1/2 [clip-path:polygon(0_100%,100%_12%,100%_100%)] bg-[linear-gradient(180deg,rgba(240,230,248,0.12)_0%,rgba(216,198,238,0.9)_100%)]" />
+          <div className="absolute right-0 bottom-0 h-[47%] w-1/2 [clip-path:polygon(0_12%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(240,230,248,0.12)_0%,rgba(216,198,238,0.9)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-[47%] [clip-path:polygon(0_100%,50%_30%,100%_100%)] bg-[linear-gradient(180deg,rgba(241,232,249,0.08)_0%,rgba(222,205,241,0.88)_100%)]" />
+          <div className="absolute inset-x-0 top-0 h-[56%] [clip-path:polygon(0_0,50%_80%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(234,222,247,1)_100%)]" />
+          <div className="absolute inset-x-0 top-0 h-[56%] [clip-path:polygon(0_0,50%_80%,100%_0)] border-b border-[rgba(203,184,227,0.68)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_49.48%,rgba(197,179,224,0.34)_49.9%,transparent_50.32%),linear-gradient(225deg,transparent_49.48%,rgba(197,179,224,0.34)_49.9%,transparent_50.32%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[rgba(211,192,232,0.72)]" />
         </div>
       </div>
     </motion.button>
