@@ -1,65 +1,441 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { ReferenceBirthdayIntro } from "@/components/romantic/ReferenceBirthdayIntro";
+
+type HeartConfig = { id: number; left: number; size: number; duration: number; delay: number };
+type Language = "en" | "ta";
+type Copy = {
+  appLabel: string; back: string; introEyebrow: string; introTitle: string; introDescription?: string;
+  introCardLabel: string; introCardText: string; introCardSubtext: string; promiseLabel: string; promiseValue: string;
+  letterEyebrow: string; letterTitle: string; letterDescription: string; letterPrivate: string; letterTo: string; letterText: string;
+  fromPlaceholder: string; linePlaceholder: string; previewPrefix: string; previewMiddle: string; previewFallbackName: string; previewFallbackLine: string;
+  continueLove: string; envelopeEyebrow: string; envelopeTitle: string; envelopeDescription: string; hiddenNote: string; hiddenText: string;
+  tapToOpen: string; openedWithLove: string; envelopeHelper: string; envelopeFirst: string; nextMemory: string;
+  exploreEyebrow: string; exploreTitle: string; exploreDescription: string; loveBadge: string; upgradePath: string; upgradeText: string; revealSurprise: string;
+  giftEyebrow: string; giftTitle: string; giftDescription: string; mysteryBox: string; mysteryText: string; openFinal: string;
+  finalEyebrow: string; finalTitle: string; finalDescription: string; closingNote: string; closingText1: string; closingText2: string; fromLabel: string; fromFallback: string; replay: string;
+  memoryLabel: string; memoryItems: string[]; memoryText: string; coupons: string[]; languageTamil: string; languageEnglish: string; openEnvelopeAria: string; openEnvelopeNoteAria: string;
+};
+
+const BIRTHDAY_DATE = "11:11";
+const HEART_ICON = "\u2665";
+const LOVE_ICON = "\u2764\uFE0F";
+const TOTAL_STEPS = 6;
+
+function getLongLetter(language: Language, fromValue: string, loveValue: string) {
+  if (language === "ta") {
+    return [
+      "உன் பிறந்தநாளுக்காக ஒரு சாதாரண வாழ்த்து மட்டும் சொல்லணும்னு எனக்கு தோணல. நம்ம காதலை மெதுவா உணர வைக்கும் ஒரு சிறிய உலகம் உனக்காக உருவாக்கணும்னு தான் நினைத்தேன்.",
+      "நீ என் வாழ்க்கையில் வந்த பிறகு சில விஷயங்கள் மாறல, முழு வாழ்க்கைதான் மென்மையாயிற்று. என் நாட்கள் அமைதியா ஆனது, என் இதயம் நிம்மதியா ஆனது, நான் நினைக்காத அளவுக்கு காதல் அழகா ஆனது.",
+      "நீ சிரிக்கிற போது எனக்கு உலகமே லேசா இருக்கு. நீ பேசுற போது என் மனசு அமைதியா இருக்கு. நீ அருகில் இருந்தா சாதாரண நாள்கூட ஒரு நினைவாக மாறிடுது.",
+      loveValue || "நீ என் வாழ்க்கையை இன்னும் இனிமையா, இன்னும் அழகா, இன்னும் அர்த்தமுள்ளதா மாற்றுற.",
+      `எப்போதும் அன்போட, ${fromValue || "உன்னை ஆழமா காதலிக்கிறவன்"}.`,
+    ];
+  }
+
+  return [
+    "For your birthday, I did not want to send only a wish. I wanted to open a little space filled with warmth, softness, and the kind of love that stays in the heart for a long time.",
+    "Since you came into my life, nothing has felt ordinary in the same way. My days feel gentler, my thoughts feel calmer, and even silence feels beautiful when it somehow carries you in it.",
+    "Your smile has become one of my safest places. Your presence makes heavy days lighter, and the smallest moment with you somehow turns into something worth keeping forever.",
+    loveValue || "You make my life feel softer, brighter, and much more beautiful than I ever expected.",
+    `Always yours, ${fromValue || "someone who loves you deeply"}.`,
+  ];
+}
+
+function getScratchRewards(language: Language) {
+  return language === "ta"
+    ? ["காலை காபி டேட்", "லாங் டிரைவ்", "மூவி நைட்", "சீக்ரெட் கிஃப்ட்", "சிறிய லவ் நோட்", "பிடித்த டின்னர்", "இரவு நடை", "ஹக் கூப்பன்", "சர்ப்ரைஸ் பிளான்", "முத்தம் பாஸ்"]
+    : ["Coffee Date", "Long Drive", "Movie Night", "Secret Gift", "Love Note", "Favorite Dinner", "Night Walk", "Hug Coupon", "Surprise Plan", "Kiss Pass"];
+}
+
+const copy: Record<Language, Copy> = {
+  en: {
+    appLabel: "Happy Birthday My Dear Devil",
+    back: "Back",
+    introEyebrow: BIRTHDAY_DATE,
+    introTitle: "I took the love in my heart and gently wove it into words… to create a little world, made just for you.",
+    
+    introCardLabel: "A letter from my universe",
+    introCardText: "This… is a small little space made just for you. A tiny piece of my world, created with all the love I carry for you. You are not just someone in my life… you are the happiness I never knew I was missing.",
+    introCardSubtext: "Tap the envelope… and step into something I made just for you.",
+    promiseLabel: "A small promise",
+    promiseValue: "One gentle tap… and you’ll step into a little universe I created just for you, filled with love, memories, and everything I feel for you.",
+    letterEyebrow: "Love letter",
+    letterTitle: "The letter opens, and your heart finally starts speaking.",
+    letterDescription: "This page now feels more intimate, more poetic, and easier to personalize later with your own words.",
+    letterPrivate: "Private",
+    letterTo: "To the one who makes my world softer",
+    letterText: "There are people who simply come into life… and then there are people who quietly change everything. You are that feeling for me. The calm in my chaos, the warmth in my quiet moments, and the peace I never knew I needed. You are my comfort, my happiness, my little healing… my medicine without even trying. And somewhere, without me even realizing it, you became my everything.",
+    fromPlaceholder: "from: your name",
+    linePlaceholder: "write one soft love line",
+    previewPrefix: "Preview:",
+    previewMiddle: "wrote,",
+    previewFallbackName: "Your name",
+    previewFallbackLine: "You make my life feel lighter and more beautiful.",
+    continueLove: `Continue with love ${LOVE_ICON}`,
+    envelopeEyebrow: "Open me",
+    envelopeTitle: "Some feelings deserve one more envelope before they are fully revealed.",
+    envelopeDescription: "This keeps the classic envelope moment alive, but now it feels more polished, dreamy, and gift-like on mobile.",
+    hiddenNote: "Hidden note",
+    hiddenText: "Your love brings peace to my mind, warmth to my days, and a kind of happiness I never want to lose.",
+    tapToOpen: "Tap to open",
+    openedWithLove: "Opened with love",
+    envelopeHelper: "The reveal pauses here for a moment, like a breath before the next soft memory opens.",
+    envelopeFirst: "Open the envelope first",
+    nextMemory: `Next memory ${LOVE_ICON}`,
+    exploreEyebrow: "Love explore",
+    exploreTitle: "A few little places where my love for you keeps blooming.",
+    exploreDescription: "This section feels less like reading and more like walking through tiny pieces of what makes her special to you.",
+    loveBadge: "Love",
+    upgradePath: "Next upgrade",
+    upgradeText: "We can later turn these into swipe cards with real photos and personal memories.",
+    revealSurprise: "Reveal the surprise",
+    giftEyebrow: "Gift reveal",
+    giftTitle: "The surprise now feels softer, prettier, and a little more magical.",
+    giftDescription: "I kept the sweet coupon idea, but made the reveal feel more premium and more in tune with the birthday-love theme.",
+    mysteryBox: "Mystery box",
+    mysteryText: "The real surprise gift can be placed here later. Right now, this card builds anticipation without spoiling the moment too early.",
+    openFinal: "Open the final page",
+    finalEyebrow: "Final page",
+    finalTitle: "Happy Birthday, my love. You deserve tenderness, joy, and beautiful surprises.",
+    finalDescription: "The ending now lands more softly, with a calmer emotional finish that still feels personal.",
+    closingNote: "Closing note",
+    closingText1: "Thank you for making my world gentler, brighter, and more alive simply by being in it.",
+    closingText2: "I hope this birthday surrounds you with peace, laughter, affection, and the kind of love that lingers long after the day is over.",
+    fromLabel: "From",
+    fromFallback: "Someone who loves you deeply",
+    replay: "Replay the experience",
+    memoryLabel: "Memory",
+    memoryItems: ["The calm your presence brings into even my busiest days", "The care hidden inside your smallest words and gestures", "The way ordinary moments become special when you are in them"],
+    memoryText: "Later this can become a real memory, a photo, or a tiny story from your journey together.",
+    coupons: ["Movie Night", "Dinner Date", "Long Drive", "Secret Gift"],
+    languageTamil: "Tamil",
+    languageEnglish: "English",
+    openEnvelopeAria: "Open the envelope",
+    openEnvelopeNoteAria: "Open the envelope note",
+  },
+  ta: {
+    appLabel: "ஹாப்பி பர்த்டே என் குட்டி பிசாசு",
+    back: "பின்",
+    introEyebrow: BIRTHDAY_DATE,
+    introTitle: "என் இதயத்தில் இருக்கும் காதலை வார்த்தைகளாக நெய்து… உனக்காக மட்டும் ஒரு சிறிய உலகம் நான் உருவாக்கியிருக்கேன்.",
+    
+    introCardLabel: "பிறந்தநாள் கடிதம்",
+    introCardText: "இது… உனக்காக மட்டும் உருவாக்கப்பட்ட ஒரு சிறிய இடம். என் உலகத்தின் ஒரு மென்மையான பகுதி… நான் உன்னுக்காக வைத்திருக்கும் எல்லா காதலாலும் உருவானது. நீ என் வாழ்க்கையில் ஒரு மனிதர் மட்டும் இல்லை… நான் இழந்திருந்த மகிழ்ச்சியை மீண்டும் உணர வைத்த உணர்வு நீ தான்.",
+    introCardSubtext: "இந்த உறையை மெதுவாகத் தொடு… நான் உனக்காக உருவாக்கிய ஒரு உலகத்துக்குள் நுழை.",
+    promiseLabel: "ஒரு சிறிய வாக்குறுதி",
+    promiseValue: "ஒரு மென்மையான தொடுதல்… நீ உனக்காக நான் உருவாக்கிய ஒரு சிறிய உலகத்துக்குள் நுழைவாய்… அதில் என் காதல், நினைவுகள், உணர்வுகள் அனைத்தும் இருக்கும்.",
+    letterEyebrow: "காதல் கடிதம்",
+    letterTitle: "கடிதம் திறக்குது, இதயத்திலிருந்த வார்த்தைகள் வடிவம் பெற ஆரம்பிக்குது.",
+    letterDescription: "இந்த page இப்போ இன்னும் personal feel கொடுக்குது. பிறகு இதை உன் உண்மையான words-ஆ easy-ஆ customize பண்ணலாம்.",
+    letterPrivate: "தனிப்பட்டது",
+    letterTo: "என் உலகத்தை மென்மையாக்கும் அவளுக்கு",
+    letterText: "நீ வந்த பிறகு… என் உலகம் அழகாக மாறிடுச்சு. சாதாரண நாள்கள்கூட  அழகான நினைவுகளா மாத்திட.  நீ என் மகிழ்ச்சி… நீ எனக்கு எல்லாமே ஆகிட்டே. ❤️",
+    fromPlaceholder: "from: உன் பெயர்",
+    linePlaceholder: "ஒரு மென்மையான காதல் வரி எழுது",
+    previewPrefix: "முன்னோட்டம்:",
+    previewMiddle: "என்று எழுதியிருக்கிறார்,",
+    previewFallbackName: "உன் பெயர்",
+    previewFallbackLine: "நீ என் வாழ்க்கையை இன்னும் அழகாக மாற்றுற.",
+    continueLove: `காதலோடு தொடரு ${LOVE_ICON}`,
+    envelopeEyebrow: "திறந்து பார்",
+    envelopeTitle: "சில உணர்வுகள் முழுசாக வெளிவர இன்னொரு envelope தேவைப்படுது.",
+    envelopeDescription: "பழைய envelope moment-ஐ வைத்தே, mobile-க்கு இன்னும் dreamy-ஆவும் sweet-ஆவும் மாற்றினேன்.",
+    hiddenNote: "ரகசிய குறிப்பு",
+    hiddenText: "உன் காதல் என் மனதுக்கு அமைதி, என் நாள்களுக்கு வெப்பம், நான் இழக்க விரும்பாத ஒரு சந்தோஷம் எல்லாம் கொடுத்தது.",
+    tapToOpen: "திறக்க touch பண்ணு",
+    openedWithLove: "காதலோடு திறந்துவிட்டாய்",
+    envelopeHelper: "அடுத்த நினைவுக்கு முன்னாடி ஒரு மென்மையான pause மாதிரி இந்த reveal அமைந்து இருக்கும்.",
+    envelopeFirst: "முதலில் envelope திறக்கவும்",
+    nextMemory: `அடுத்த நினைவு ${LOVE_ICON}`,
+    exploreEyebrow: "காதல் பயணம்",
+    exploreTitle: "உன்னை நான் இன்னும் இன்னும் காதலிக்க காரணமான சில சின்ன இடங்கள்.",
+    exploreDescription: "இந்த section படிக்கிற மாதிரி இல்லாமல், அவளை special ஆக்கும் tiny feelings-ஐ explore பண்ணுற மாதிரி இருக்கும்.",
+    loveBadge: "காதல்",
+    upgradePath: "அடுத்த மேம்பாடு",
+    upgradeText: "பிறகு இதை real photos, swipe cards, personal memories உடன் இன்னும் அழகாக்கலாம்.",
+    revealSurprise: "சர்ப்ரைஸை திற",
+    giftEyebrow: "பரிசு reveal",
+    giftTitle: "இந்த surprise section இப்போ இன்னும் soft-ஆவும் pretty-ஆவும் magical-ஆவும் feel ஆகுது.",
+    giftDescription: "பழைய coupon idea-ஐ வைத்தே, birthday-love theme-க்கு பொருந்தும் premium reveal feel கொடுத்தேன்.",
+    mysteryBox: "ரகசிய பெட்டி",
+    mysteryText: "உண்மையான surprise gift-ஐ பிறகு இங்கே வைக்கலாம். இப்போக்கு இது suspense-ஐ build பண்ணி excitement-ஐ வைத்திருக்கும்.",
+    openFinal: "கடைசி பக்கத்தை திற",
+    finalEyebrow: "கடைசி பக்கம்",
+    finalTitle: "இனிய பிறந்தநாள் வாழ்த்துகள் என் காதலே. நீ மென்மை, சந்தோஷம், அழகான சர்ப்ரைஸ்கள் எல்லாவற்றிற்கும் தகுதியானவள்.",
+    finalDescription: "Ending இப்போ இன்னும் soft-ஆ land ஆகும் மாதிரி refine பண்ணியிருக்கேன். personal feelவும் அதில் இருக்கும்.",
+    closingNote: "முடிவு குறிப்பு",
+    closingText1: "என் உலகத்தை மென்மையாகவும் பிரகாசமாகவும் உயிரோடு இருக்குமாறும் மாற்றியது நீயே. அதற்காக நன்றி.",
+    closingText2: "இந்த பிறந்தநாள் உன்னை அமைதி, சிரிப்பு, அன்பு, நாள் முடிந்த பின்னும் மனதில் நீளும் காதல் எல்லாம் சுற்றி இருக்கணும் என்று நான் விரும்புகிறேன்.",
+    fromLabel: "அனுப்புவது",
+    fromFallback: "உன்னை ஆழமாக காதலிக்கும் ஒருவர்",
+    replay: "மீண்டும் பாரு",
+    memoryLabel: "நினைவு",
+    memoryItems: ["என் busiest days-ல கூட நீ கொடுக்கும் அமைதி", "உன் சின்ன வார்த்தைகளுக்குள் இருக்கும் அக்கறை", "சாதாரண தருணங்கள்கூட உன்னுடன் இருக்கும்போது special ஆகி விடுவது"],
+    memoryText: "பிறகு இதை ஒரு real memory-ஆ, photo-ஆ, அல்லது உங்கள் இருவரின் tiny story-ஆ மாற்றலாம்.",
+    coupons: ["Movie Night", "Dinner Date", "Long Drive", "Secret Gift"],
+    languageTamil: "தமிழ்",
+    languageEnglish: "ஆங்கிலம்",
+    openEnvelopeAria: "உறையை திற",
+    openEnvelopeNoteAria: "உறை குறிப்பை திற",
+  },
+};
+
+const pureTamilCopy: Copy = {
+  appLabel: "பிறந்தநாள் ஆச்சரிய அனுபவம்",
+  back: "பின்",
+  introEyebrow: BIRTHDAY_DATE,
+  introTitle: "மென்மையும் காதலும் கலந்த ஒரு சிறிய பிறந்தநாள் உலகம்.",
+  introDescription: "இங்கு நிறங்கள் மெதுவாக கலக்கின்றன. அதனால் முதல் பக்கம் இன்னும் இனிமையாகவும் மென்மையாகவும் காதலாகவும் தோன்றுகிறது.",
+  introCardLabel: "பிறந்தநாள் கடிதம்",
+  introCardText: "13.04க்காக நான் ஒரு சாதாரண செய்தி அனுப்பவே நினைக்கவில்லை. அதற்கு பதிலாக இதமாகவும் காதலாகவும் மனதில் நிற்கும் ஒரு சிறிய உலகத்தை உருவாக்க நினைத்தேன்.",
+  introCardSubtext: "இந்த உறையைத் தொட்டு பாருங்கள். பிறந்தநாள் ஆச்சரியம் மெதுவாக திறக்கட்டும்.",
+  promiseLabel: "வாக்குறுதி",
+  promiseValue: "இந்த உறையை ஒரு முறை தொட்டால், முழு காதல் கதை தொடங்கும்.",
+  letterEyebrow: "காதல் கடிதம்",
+  letterTitle: "இந்தக் கடிதம் திறந்தவுடன், என் மனதின் வார்த்தைகள் உன்னிடம் வந்து சேரும்.",
+  letterDescription: "இந்தப் பக்கத்தில் உனக்காக இன்னும் தனிப்பட்ட சொற்களை நாம்பிறகு சேர்க்கலாம்.",
+  letterPrivate: "தனிப்பட்டது",
+  letterTo: "என் உலகத்தை மென்மையாக்கும் உனக்காக",
+  letterText: "வாழ்க்கைக்குள் வந்து மட்டும் போகாமல், அதை முழுவதும் அழகாக மாற்றிவிடும் சிலர் உண்டு. எனக்காக அந்த உணர்வு நீ தான். என் அமைதியிலும், என் மகிழ்ச்சியிலும், என் தினசரி சிறு நிமிடங்களிலும் நீ கலந்திருக்கிறாய்.",
+  fromPlaceholder: "அனுப்புபவர் பெயர்",
+  linePlaceholder: "ஒரு மென்மையான காதல் வரியை எழுதுங்கள்",
+  previewPrefix: "முன்னோட்டம்:",
+  previewMiddle: "என்று எழுதியுள்ளார்,",
+  previewFallbackName: "உன் பெயர்",
+  previewFallbackLine: "நீ என் வாழ்கையை இன்னும் அழகாக மாற்றுகிறாய்.",
+  continueLove: `காதலுடன் தொடருங்கள் ${LOVE_ICON}`,
+  envelopeEyebrow: "திறந்து பார்",
+  envelopeTitle: "சில உணர்வுகள் முழுமையாக வெளிவர இன்னொரு உறை தேவைப்படுகிறது.",
+  envelopeDescription: "இந்தப் பகுதி பழைய உறை தருணத்தை அப்படியே வைத்துக்கொண்டு இன்னும் இனிமையாகத் திறக்கிறது.",
+  hiddenNote: "ரகசிய குறிப்பு",
+  hiddenText: "உன் காதல் என் மனதிற்கு அமைதியும், என் நாள்களுக்கு இதமுமாக இருக்கிறது.",
+  tapToOpen: "திறக்க தொட்டு பார்",
+  openedWithLove: "காதலுடன் திறந்தது",
+  envelopeHelper: "அடுத்த நினைவிற்கு முன் வரும் மென்மையான இடைவேளை போல இந்தத் திறப்பு அமைந்திருக்கிறது.",
+  envelopeFirst: "முதலில் உறையைத் திற",
+  nextMemory: `அடுத்த நினைவு ${LOVE_ICON}`,
+  exploreEyebrow: "காதல் பயணம்",
+  exploreTitle: "நான் உன்னை இன்னும் அதிகமாக நேசிக்கச் செய்யும் சில சிறு இடங்கள்.",
+  exploreDescription: "இந்தப் பகுதி வாசிப்பதற்காக மட்டும் இல்லாமல், நம் நினைவுகளைத் தொட்டுப் பார்க்கும் ஒரு சிறிய நடைபயணம் போல இருக்கும்.",
+  loveBadge: "காதல்",
+  upgradePath: "அடுத்த மேம்பாடு",
+  upgradeText: "பிறகு இதை நம் உண்மையான புகைப்படங்களும் நினைவுகளும் சேர்த்து இன்னும் அழகாக மாற்றலாம்.",
+  revealSurprise: "ஆச்சரியத்தைத் திற",
+  giftEyebrow: "பரிசு திறப்பு",
+  giftTitle: "இந்த ஆச்சரிய பகுதி இப்போது இன்னும் மென்மையாகவும் அழகாகவும் தெரிகிறது.",
+  giftDescription: "இந்த பரிசு பகுதியை பிறந்தநாள் காதல் உணர்வுக்கு பொருத்தமாக வைத்திருக்கிறேன்.",
+  mysteryBox: "ரகசிய பெட்டி",
+  mysteryText: "உண்மையான பரிசை பிறகு இங்கே சேர்க்கலாம். இப்போது இது ஆவலை மெதுவாக உயர்த்திக்கொண்டு செல்லும்.",
+  openFinal: "கடைசி பக்கத்தைத் திற",
+  finalEyebrow: "கடைசி பக்கம்",
+  finalTitle: "இனிய பிறந்தநாள் வாழ்த்துகள் என் காதலே. உனக்காக இந்த மென்மையான சிறு உலகம்.",
+  finalDescription: "இது அமைதியான, இனிமையான, மனதை வருடும் ஒரு நிறைவு தருணம்.",
+  closingNote: "முடிவு குறிப்பு",
+  closingText1: "என் உலகத்தை மென்மையாகவும் ஒளிவிட்டதாகவும் மாற்றியது நீ தான்.",
+  closingText2: "இந்தப் பிறந்தநாள் உன்னை அமைதி, சிரிப்பு, அன்பு, நீண்ட நாட்கள் மனதில் நிற்கும் நினைவுகள் எல்லாவற்றாலும் சுற்றிக்கொள்ள வேண்டும்.",
+  fromLabel: "அனுப்புபவர்",
+  fromFallback: "உன்னை ஆழமாக நேசிக்கும் ஒருவர்",
+  replay: "மீண்டும் பாருங்கள்",
+  memoryLabel: "நினைவு",
+  memoryItems: [
+    "என் பரபரப்பான நாட்களிலும் நீ கொடுக்கும் அமைதி",
+    "உன் சிறிய சொற்களுக்குள் இருக்கும் அக்கறை",
+    "சாதாரண தருணங்களைக் கூட சிறப்பாக மாற்றும் உன் இருப்பு",
+  ],
+  memoryText: "பிறகு இதை நம் உண்மையான நினைவுகள், புகைப்படங்கள், சிறு கதைகள் ஆகியவையாக மாற்றலாம்.",
+  coupons: ["திரைப்பட இரவு", "இரவு உணவு சந்திப்பு", "நீண்ட பயணம்", "ரகசிய பரிசு"],
+  languageTamil: "தமிழ்",
+  languageEnglish: "English",
+  openEnvelopeAria: "உறையைத் திற",
+  openEnvelopeNoteAria: "உறை குறிப்பைத் திற",
+};
+
+function getActiveCopy(language: Language) {
+  return language === "ta" ? pureTamilCopy : copy.en;
+}
+
+function createHearts(count: number): HeartConfig[] {
+  return Array.from({ length: count }, (_, index) => ({ id: index, left: Math.random() * 100, size: 14 + Math.random() * 18, duration: 9 + Math.random() * 6, delay: Math.random() * 5 }));
+}
+
+function BackgroundHearts() {
+  const [hearts] = useState<HeartConfig[]>(() => createHearts(24));
+  return <div className="pointer-events-none fixed inset-0 overflow-hidden">{hearts.map((heart) => <span key={heart.id} className="rain-heart text-[#ff6b7f]/85" style={{ left: `${heart.left}%`, fontSize: `${heart.size}px`, animationDuration: `${heart.duration}s`, animationDelay: `${heart.delay}s` }}>{HEART_ICON}</span>)}</div>;
+}
+
+function IntroLiveHearts() {
+  const hearts = [
+    { top: "18%", left: "10%", size: "text-lg", delay: "0s", duration: "3.4s" },
+    { top: "24%", left: "20%", size: "text-xs", delay: "0.8s", duration: "4.2s" },
+    { top: "32%", left: "12%", size: "text-sm", delay: "1.1s", duration: "3.8s" },
+    { top: "20%", right: "11%", size: "text-lg", delay: "0.3s", duration: "3.6s" },
+    { top: "30%", right: "17%", size: "text-xs", delay: "1.4s", duration: "4s" },
+    { top: "68%", right: "8%", size: "text-lg", delay: "0.9s", duration: "4.4s" },
+    { bottom: "22%", left: "9%", size: "text-sm", delay: "1.8s", duration: "3.7s" },
+    { bottom: "14%", right: "18%", size: "text-xs", delay: "2.1s", duration: "4.1s" },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      {hearts.map((heart, index) => (
+        <span
+          key={index}
+          className={`pointer-events-none absolute text-[#ff4f72] ${heart.size} live-heart`}
+          style={{
+            top: heart.top,
+            left: heart.left,
+            right: heart.right,
+            bottom: heart.bottom,
+            animationDelay: heart.delay,
+            animationDuration: heart.duration,
+          }}
+        >
+          {"\u2665"}
+        </span>
+      ))}
+    </>
   );
+}
+
+function ProgressDots({ step, totalSteps }: { step: number; totalSteps: number }) {
+  return <div className="mb-5 flex gap-2">{Array.from({ length: totalSteps }, (_, index) => <span key={index} className={`h-1.5 flex-1 rounded-full transition-all ${index < step ? "bg-[linear-gradient(90deg,#d77767,#efb19b)]" : "bg-white/75"}`} />)}</div>;
+}
+
+function PrimaryButton({ label, onClick, tone = "dark" }: { label: string; onClick: () => void; tone?: "dark" | "rose" | "light" }) {
+  const toneClass =
+    tone === "rose"
+      ? "bg-[linear-gradient(180deg,#c9a7f2_0%,#9e87de_52%,#826ecb_100%)] text-white shadow-[0_18px_35px_rgba(136,116,203,0.28)]"
+      : tone === "light"
+        ? "border border-white/80 bg-white/90 text-[#6a5f84]"
+        : "bg-[linear-gradient(180deg,#8c8ee0_0%,#767ed1_50%,#666dbf_100%)] text-white shadow-[0_18px_35px_rgba(108,112,190,0.3)]";
+  return <button type="button" onClick={onClick} className={`rounded-[1.25rem] px-5 py-4 text-sm font-semibold transition hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 ${toneClass}`}>{label}</button>;
+}
+
+function ScratchCard({ label, revealed, onReveal, language }: { label: string; revealed: boolean; onReveal: () => void; language: Language }) {
+  const scratchLabel = language === "ta" ? "தேய்த்து திற" : "Scratch";
+  const tapLabel = language === "ta" ? "தொட்டு திற" : "Tap to reveal";
+  const revealedLabel = language === "ta" ? "திறந்தது" : "Revealed";
+  return <button type="button" onClick={onReveal} className="group relative min-h-[7.6rem] overflow-hidden rounded-[1.45rem] text-left" aria-pressed={revealed}><div className={`dream-card-soft absolute inset-0 transition duration-500 ${revealed ? "scale-[1.02] opacity-0" : "opacity-100"}`}><div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0),rgba(255,255,255,0.22))]" /><div className="absolute inset-x-5 top-4 h-[2px] rounded-full bg-white/70" /><div className="flex h-full flex-col items-center justify-center px-3 text-center"><p className="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-[#aa8ebd]">{scratchLabel}</p><p className="mt-3 text-3xl text-[#d987ac]">{LOVE_ICON}</p><p className="mt-2 text-xs leading-5 text-[#7b6e8f]">{tapLabel}</p></div></div><div className={`dream-card-deep relative flex min-h-[7.6rem] flex-col items-center justify-center px-3 py-4 text-center text-white transition duration-500 ${revealed ? "opacity-100" : "opacity-0"}`}><p className="text-[0.65rem] uppercase tracking-[0.32em] text-white/65">{revealedLabel}</p><p className="mt-3 text-2xl">{LOVE_ICON}</p><p className="mt-2 text-sm font-semibold leading-5">{label}</p></div></button>;
+}
+
+function LanguageToggle({ language, onChange, tamilLabel, englishLabel }: { language: Language; onChange: (language: Language) => void; tamilLabel: string; englishLabel: string }) {
+  return <div className="flex items-center gap-1 rounded-full bg-white/88 p-1 shadow-[0_10px_24px_rgba(149,129,198,0.16)]"><button type="button" onClick={() => onChange("ta")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "ta" ? "bg-[linear-gradient(180deg,#f5d8ef,#eec4e4)] text-[#7a6b9b]" : "text-[#7b6d98]"}`}>{tamilLabel}</button><button type="button" onClick={() => onChange("en")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "en" ? "bg-[linear-gradient(180deg,#7c71b4,#62578f)] text-white" : "text-[#7b6d98]"}`}>{englishLabel}</button></div>;
+}
+
+function MobileShell({ step, eyebrow, title, description, children, onBack, language, onLanguageChange, showLanguageToggle = true, showLiveHearts = false, mutedIntro = false }: { step: number; eyebrow: string; title: string; description: string; children: React.ReactNode; onBack?: () => void; language: Language; onLanguageChange: (language: Language) => void; showLanguageToggle?: boolean; showLiveHearts?: boolean; mutedIntro?: boolean }) {
+  const t = getActiveCopy(language);
+  const sectionClass = mutedIntro
+    ? "bg-[linear-gradient(180deg,#ef9fa1_0%,#eaa0a4_18%,#eab0b1_32%,#e9bfc0_46%,#e2c4d4_62%,#b3b5df_82%,#717ab8_100%)]"
+    : "bg-[linear-gradient(180deg,#f5d8ea_0%,#efd7ee_28%,#e6d7f1_58%,#ced5ef_100%)]";
+  const overlayClass = mutedIntro
+    ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,236,229,0.08)_20%,rgba(255,255,255,0.03)_44%,rgba(72,86,162,0.08)_100%)]"
+    : "bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,rgba(255,243,250,0.08)_24%,rgba(245,232,252,0.05)_48%,rgba(148,158,224,0.08)_100%)]";
+  const glowClass = mutedIntro
+    ? "bg-[linear-gradient(90deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.02)_18%,rgba(255,255,255,0)_50%,rgba(255,255,255,0.03)_82%,rgba(255,255,255,0.08)_100%)]"
+    : "bg-[linear-gradient(90deg,rgba(255,255,255,0.09)_0%,rgba(255,255,255,0.02)_18%,rgba(255,255,255,0)_50%,rgba(255,255,255,0.03)_82%,rgba(255,255,255,0.08)_100%)]";
+  const shellClass = mutedIntro
+    ? "bg-[linear-gradient(180deg,rgba(255,248,243,0.74)_0%,rgba(255,238,233,0.72)_38%,rgba(243,232,239,0.72)_72%,rgba(220,225,249,0.76)_100%)] shadow-[0_24px_70px_rgba(93,85,140,0.16)]"
+    : "bg-[linear-gradient(180deg,rgba(255,251,253,0.8)_0%,rgba(251,240,247,0.78)_38%,rgba(241,233,247,0.76)_74%,rgba(230,234,248,0.78)_100%)] shadow-[0_22px_80px_rgba(157,145,202,0.16)]";
+  return <section className={`relative min-h-screen overflow-hidden px-4 py-5 text-[#4f3d62] ${sectionClass}`}><BackgroundHearts /><div className={`pointer-events-none absolute inset-0 ${overlayClass}`} /><div className={`pointer-events-none absolute inset-0 ${glowClass}`} />{showLiveHearts ? <IntroLiveHearts /> : null}<div className={`relative mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-sm flex-col rounded-[2.15rem] border border-white/72 p-4 backdrop-blur-xl ${shellClass}`}><div className="relative mb-4 flex items-center justify-center"><button type="button" onClick={onBack} disabled={!onBack} className={`absolute left-0 rounded-full px-3 py-1.5 text-xs font-medium transition ${onBack ? "bg-white/94 text-[#756990] shadow-sm hover:bg-white" : "cursor-default opacity-0"}`} aria-label={t.back}>{t.back}</button>{showLanguageToggle ? <LanguageToggle language={language} onChange={onLanguageChange} tamilLabel={t.languageTamil} englishLabel={t.languageEnglish} /> : <div className="w-[122px]" />}<div className="absolute right-0 rounded-full bg-[linear-gradient(180deg,#7f74b8,#655993)] px-3 py-1 text-[0.7rem] font-medium text-white shadow-[0_8px_18px_rgba(110,102,170,0.22)]">{step}/{TOTAL_STEPS}</div></div><div><p className="text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-[#d48cab]">{eyebrow}</p><p className="mt-1 text-xs text-[#8b7f9d]">{t.appLabel}</p></div><ProgressDots step={step} totalSteps={TOTAL_STEPS} /><div className="mb-6"><h1 className="max-w-[14ch] text-3xl font-semibold leading-tight text-[#5b5078]">{title}</h1><p className="mt-3 text-sm leading-6 text-[#7c6f91]">{description}</p></div><div className="flex-1">{children}</div></div></section>;
+}
+
+function IntroScreen({ onNext, language, onLanguageChange }: { onNext: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
+  const t = getActiveCopy(language);
+  return <ReferenceBirthdayIntro copy={t} language={language} onLanguageChange={onLanguageChange} onOpen={onNext} />;
+}
+
+function LetterFormScreen({ onNext, onBack, fromValue, setFromValue, loveValue, setLoveValue, language, onLanguageChange }: { onNext: () => void; onBack: () => void; fromValue: string; setFromValue: (value: string) => void; loveValue: string; setLoveValue: (value: string) => void; language: Language; onLanguageChange: (language: Language) => void }) {
+  const t = getActiveCopy(language);
+  return <MobileShell step={2} eyebrow={t.letterEyebrow} title={t.letterTitle} description={t.letterDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft letter-paper rounded-[1.95rem] p-5"><div className="mb-4 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.3em] text-[#d68cb0]">{t.letterTo}</p><span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span></div><p className="text-base leading-7 text-[#645875]">{t.letterText}</p><div className="mt-5 space-y-4"><input type="text" placeholder={t.fromPlaceholder} value={fromValue} onChange={(event) => setFromValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /><input type="text" placeholder={t.linePlaceholder} value={loveValue} onChange={(event) => setLoveValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /></div><div className="dream-card-soft mt-5 rounded-[1.35rem] p-3 text-sm leading-6 text-[#6d627f]">{t.previewPrefix} {fromValue || t.previewFallbackName} {t.previewMiddle} &ldquo;{loveValue || t.previewFallbackLine}&rdquo;</div></div><PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" /></div></MobileShell>;
+}
+
+function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, onLanguageChange }: { onNext: () => void; onBack: () => void; fromValue: string; loveValue: string; language: Language; onLanguageChange: (language: Language) => void }) {
+  const [opened, setOpened] = useState(false);
+  const t = getActiveCopy(language);
+  const longLetter = language === "ta"
+    ? [
+        "உன் பிறந்தநாளுக்காக ஒரு சாதாரண வாழ்த்து மட்டும் அனுப்ப வேண்டும் என்று எனக்குத் தோன்றவில்லை. அதற்குப் பதிலாக உனக்காக மட்டும் ஒரு சிறிய காதல் உலகத்தை உருவாக்க வேண்டும் என்று நினைத்தேன்.",
+        "நீ என் வாழ்க்கைக்குள் வந்த பிறகு நாட்கள் மென்மையாகின. மனம் அமைதியாகின. சாதாரண தருணங்களுக்குக் கூட அழகு சேர்ந்துவிட்டது.",
+        "நீ சிரிக்கும் போது என் உலகமே ஒளிவிடுகிறது. நீ பேசும் போது என் மனம் அமைதியாகிறது. நீ அருகில் இருந்தால் ஒரு சாதாரண நாள்கூட நினைவாக மாறிவிடுகிறது.",
+        loveValue || "நீ என் வாழ்க்கையை இன்னும் இனிமையாகவும் அழகாகவும் அர்த்தமுள்ளதாகவும் மாற்றுகிறாய்.",
+        `எப்போதும் அன்புடன், ${fromValue || "உன்னை ஆழமாக நேசிக்கும் ஒருவர்"}.`,
+      ]
+    : getLongLetter(language, fromValue, loveValue);
+  const ornamentHearts = [
+    { left: "11%", top: "28%", delay: "0s", size: "text-sm" },
+    { left: "16%", bottom: "23%", delay: "1s", size: "text-[0.8rem]" },
+    { right: "13%", top: "34%", delay: "0.5s", size: "text-sm" },
+    { right: "17%", bottom: "26%", delay: "1.35s", size: "text-[0.8rem]" },
+  ];
+
+  const ornamentSparkles = [
+    { left: "13%", top: "16%", delay: "0.35s" },
+    { right: "15%", top: "20%", delay: "1.05s" },
+    { left: "24%", bottom: "22%", delay: "1.65s" },
+    { right: "24%", bottom: "18%", delay: "0.8s" },
+  ];
+
+  return <MobileShell step={3} eyebrow={t.envelopeEyebrow} title={t.envelopeTitle} description={t.envelopeDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} showLiveHearts={!opened}><div className="flex h-full flex-col">{opened ? <div className="dream-card-soft relative flex h-full flex-col overflow-hidden rounded-[2.1rem] p-5"><div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-white/92" /><div className="drip-left pointer-events-none absolute top-0 left-0 h-20 w-1/2 bg-white/94" /><div className="drip-right pointer-events-none absolute top-0 right-0 h-20 w-1/2 bg-white/94" /><div className="relative z-10 mt-12 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.35em] text-[#8aa5de]">{t.hiddenNote}</p><span className="rounded-full bg-white/80 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#b07db8]">{t.openedWithLove}</span></div><div className="letter-paper relative z-10 mt-4 flex-1 rounded-[1.8rem] p-5"><p className="text-xs uppercase tracking-[0.3em] text-[#d68cb0]">{t.letterTo}</p><div className="mt-4 space-y-4 overflow-y-auto pr-1 text-[0.95rem] leading-7 text-[#645875]">{longLetter.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></div><div className="relative z-10 mt-4"><PrimaryButton label={t.nextMemory} onClick={onNext} /></div></div> : <div className="flex h-full flex-col gap-4"><div className="dream-card-soft rounded-[1.7rem] px-4 py-4 text-center shadow-[0_14px_34px_rgba(144,123,164,0.12)]"><p className="text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-[#a18fb6]">{t.hiddenNote}</p><p className="mt-3 text-sm leading-6 text-[#645875]">{t.hiddenText}</p></div><button type="button" onClick={() => setOpened(true)} className="envelope-pulse relative mx-auto flex h-[17.5rem] w-full items-center justify-center overflow-hidden rounded-[2.25rem] border border-white/25 bg-[radial-gradient(circle_at_center,#fff7ef_0%,#ffd8ba_12%,#8a92cf_40%,#495c9d_72%,#223066_100%)] shadow-[0_14px_40px_rgba(0,0,0,0.14),0_30px_70px_rgba(46,59,113,0.4),0_0_90px_rgba(255,208,171,0.28)]" aria-label={t.openEnvelopeNoteAria}><span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.03)_38%,rgba(9,20,60,0.16)_100%)]" /><span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,223,184,0.34)_0%,rgba(255,223,184,0.14)_24%,transparent_50%)]" /><span className="pointer-events-none absolute left-1/2 top-4 h-[2px] w-24 -translate-x-1/2 rounded-full bg-white/45" />{ornamentSparkles.map((sparkle, index) => <span key={index} className="gem-sparkles absolute text-[0.8rem] text-[#f4d88c] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]" style={{ left: sparkle.left, right: sparkle.right, top: sparkle.top, bottom: sparkle.bottom, animationDelay: sparkle.delay }}>{"\u2726"}</span>)}{ornamentHearts.map((heart, index) => <span key={index} className={`live-heart absolute text-[#ff577d] ${heart.size}`} style={{ left: heart.left, right: heart.right, top: heart.top, bottom: heart.bottom, animationDelay: heart.delay, animationDuration: "3.6s" }}>{"\u2665"}</span>)}<div className="relative z-10 flex h-[11.8rem] w-[13.6rem] items-center justify-center"><div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(255,241,214,0.84),rgba(255,241,214,0.05)_72%)] blur-xl" /><div className="envelope-shell relative h-[9.35rem] w-[12.2rem] overflow-hidden rounded-[1.35rem] border border-white/58 bg-[linear-gradient(180deg,rgba(255,250,247,0.98)_0%,rgba(244,232,255,0.92)_100%)] shadow-[0_22px_38px_rgba(255,236,206,0.34)]"><div className="absolute inset-x-0 bottom-0 h-[58%] bg-[linear-gradient(180deg,rgba(252,243,239,0.9)_0%,rgba(236,223,247,0.96)_100%)]" /><div className="absolute inset-x-4 top-3 rounded-[0.95rem] bg-white/72 px-3 py-2 text-center shadow-[0_10px_20px_rgba(188,161,194,0.18)]"><p className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-[#cb8177]">{t.tapToOpen}</p><p className="mt-1 text-[0.72rem] leading-5 text-[#72637f]">{fromValue || t.fromFallback}</p></div><div className="absolute inset-x-0 top-0 h-[54%] origin-top envelope-flap bg-[linear-gradient(180deg,rgba(255,249,245,1)_0%,rgba(238,225,248,0.96)_100%)]" /><div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_49.3%,rgba(186,164,213,0.34)_49.6%,transparent_50.2%),linear-gradient(225deg,transparent_49.3%,rgba(186,164,213,0.34)_49.6%,transparent_50.2%)]" /><div className="absolute inset-x-0 bottom-0 h-[58%] [clip-path:polygon(0_100%,50%_42%,100%_100%)] border-t border-[rgba(176,154,206,0.38)] bg-[linear-gradient(180deg,rgba(245,232,250,0.8)_0%,rgba(230,214,243,0.96)_100%)]" /><div className="absolute left-1/2 top-[51%] h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/60 bg-[radial-gradient(circle_at_35%_35%,#fff5e8_0%,#f2c6a7_56%,#d47c78_100%)] shadow-[0_8px_18px_rgba(212,124,120,0.22)]" /></div></div></button><div className="dream-card-soft rounded-[1.5rem] p-4 text-sm leading-6 text-[#74688a]">{t.envelopeHelper}</div><div className="mt-auto w-full"><PrimaryButton label={t.envelopeFirst} onClick={() => setOpened(true)} /></div></div>}</div></MobileShell>;
+}
+
+function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
+  const t = getActiveCopy(language);
+  const [activePhoto, setActivePhoto] = useState(1);
+  const slideCount = 3;
+  const memorySlides = language === "ta"
+    ? [
+        { src: "/memory-demo-1.jpg", alt: "Memory slide one", message: "இந்தப் படம் வந்தவுடன் அந்த நாள் சிரிப்பு முதலில் நினைவுக்கு வருகிறது." },
+        { src: "/memory-demo-2.jpg", alt: "Memory slide two", message: "இது போன்ற ஒவ்வொரு தருணமும், உன்னுடன் இருந்த நினைவுகளை இன்னும் அருமையாக்குகிறது." },
+        { src: "/memory-demo-3.jpg", alt: "Memory slide three", message: "இது ஒரு சாதாரண படம் அல்ல; என் மனம் மீண்டும் திரும்பிப் பார்க்கும் ஒரு சிறிய நினைவு." },
+      ]
+    : [
+        { src: "/memory-demo-1.jpg", alt: "Memory slide one", message: "This photo brings back the first soft smile that stayed with me from that day." },
+        { src: "/memory-demo-2.jpg", alt: "Memory slide two", message: "Moments like this quietly turn ordinary time with you into something precious." },
+        { src: "/memory-demo-3.jpg", alt: "Memory slide three", message: "This is not just a photo, it is one of those little memories my heart revisits often." },
+      ];
+
+  useEffect(() => {
+    let currentIndex = 0;
+    const interval = window.setInterval(() => {
+      currentIndex = (currentIndex + 1) % slideCount;
+      setActivePhoto(currentIndex + 1);
+    }, 1800);
+
+    return () => window.clearInterval(interval);
+  }, [language]);
+
+  const photoClasses = "absolute inset-0 overflow-hidden rounded-[1.6rem] border-[6px] border-white bg-white shadow-[0_18px_38px_rgba(179,143,190,0.28)] transition-all duration-700";
+
+  return <MobileShell step={4} eyebrow={t.exploreEyebrow} title={t.exploreTitle} description={t.exploreDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft relative overflow-hidden rounded-[2rem] p-4"><div className="relative mx-auto h-64 w-[11.5rem]">{memorySlides.map((slide, index) => <div key={slide.src} className={`${photoClasses} ${activePhoto === index + 1 ? "translate-y-0 scale-100 opacity-100" : "translate-y-6 scale-95 opacity-0"}`}><Image src={slide.src} alt={slide.alt} width={460} height={560} className="h-full w-full object-cover" /></div>)}</div><div className="mt-4 rounded-[1.2rem] bg-white/78 px-4 py-4 text-center shadow-[0_12px_24px_rgba(196,163,201,0.16)]"><p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#bf82ae]">{t.loveBadge}</p>{memorySlides.map((slide, index) => <p key={slide.message} className={`mt-3 text-sm leading-6 text-[#756a89] transition-all duration-500 ${activePhoto === index + 1 ? "block opacity-100" : "hidden opacity-0"}`}>{slide.message}</p>)}</div></div><PrimaryButton label={t.revealSurprise} onClick={onNext} tone="rose" /></div></MobileShell>;
+}
+
+function GiftRevealScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
+  const t = getActiveCopy(language);
+  const [revealedCards, setRevealedCards] = useState<boolean[]>(() => Array.from({ length: 10 }, () => false));
+  const rewards = language === "ta"
+    ? ["காலை காபி சந்திப்பு", "நீண்ட பயணம்", "திரைப்பட இரவு", "ரகசிய பரிசு", "காதல் குறிப்பு", "பிடித்த இரவு உணவு", "இரவு நடை", "அணைப்பு சீட்டு", "ஆச்சரிய திட்டம்", "முத்தம் சீட்டு"]
+    : getScratchRewards(language);
+  return <MobileShell step={5} eyebrow={t.giftEyebrow} title={t.giftTitle} description={t.giftDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="shine-card dream-card-deep rounded-[2rem] p-5 text-white"><p className="text-xs uppercase tracking-[0.35em] text-white/75">{t.mysteryBox}</p><p className="mt-4 text-3xl font-semibold tracking-tight">10</p><p className="mt-2 text-sm leading-6 text-white/85">{t.mysteryText}</p></div><div className="grid grid-cols-2 gap-3">{rewards.map((reward, index) => <ScratchCard key={reward} label={reward} revealed={revealedCards[index]} language={language} onReveal={() => setRevealedCards((current) => current.map((item, currentIndex) => currentIndex === index ? true : item))} />)}</div><PrimaryButton label={t.openFinal} onClick={onNext} /></div></MobileShell>;
+}
+
+function FinalScreen({ onBack, fromValue, language, onLanguageChange }: { onBack: () => void; fromValue: string; language: Language; onLanguageChange: (language: Language) => void }) {
+  const t = getActiveCopy(language);
+  return <MobileShell step={6} eyebrow={t.finalEyebrow} title={t.finalTitle} description={t.finalDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft rounded-[2rem] p-5"><p className="text-xs uppercase tracking-[0.35em] text-[#d48cab]">{t.closingNote}</p><p className="mt-4 text-xl font-semibold leading-tight text-[#5f5472]">{t.closingText1}</p><p className="mt-4 text-sm leading-7 text-[#786d8b]">{t.closingText2}</p></div><div className="dream-card-deep rounded-[1.6rem] px-4 py-5 text-center text-white"><p className="text-xs uppercase tracking-[0.35em] text-white/65">{t.fromLabel}</p><p className="mt-2 text-lg font-semibold">{fromValue || t.fromFallback}</p></div><PrimaryButton label={t.replay} onClick={() => window.location.reload()} tone="light" /></div></MobileShell>;
+}
+
+export default function Page() {
+  const [screen, setScreen] = useState(0);
+  const [fromValue, setFromValue] = useState("");
+  const [loveValue, setLoveValue] = useState("");
+  const [language, setLanguage] = useState<Language>("en");
+
+  if (screen === 0) return <IntroScreen onNext={() => setScreen(1)} language={language} onLanguageChange={setLanguage} />;
+  if (screen === 1) return <LetterFormScreen onNext={() => setScreen(2)} onBack={() => setScreen(0)} fromValue={fromValue} setFromValue={setFromValue} loveValue={loveValue} setLoveValue={setLoveValue} language={language} onLanguageChange={setLanguage} />;
+  if (screen === 2) return <EnvelopeRevealScreen onNext={() => setScreen(3)} onBack={() => setScreen(1)} fromValue={fromValue} loveValue={loveValue} language={language} onLanguageChange={setLanguage} />;
+  if (screen === 3) return <ExploreScreen onNext={() => setScreen(4)} onBack={() => setScreen(2)} language={language} onLanguageChange={setLanguage} />;
+  if (screen === 4) return <GiftRevealScreen onNext={() => setScreen(5)} onBack={() => setScreen(3)} language={language} onLanguageChange={setLanguage} />;
+  return <FinalScreen onBack={() => setScreen(4)} fromValue={fromValue} language={language} onLanguageChange={setLanguage} />;
 }
