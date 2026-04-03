@@ -125,23 +125,23 @@ body {
 .dream-card {
   border: 1px solid rgba(255, 255, 255, 0.82);
   background:
-    linear-gradient(160deg, rgba(255, 253, 250, 0.98) 0%, rgba(251, 243, 249, 0.96) 44%, rgba(241, 232, 247, 0.94) 76%, rgba(228, 233, 249, 0.92) 100%);
-  box-shadow: 0 22px 58px rgba(161, 146, 189, 0.15);
+    linear-gradient(160deg, rgba(255, 252, 250, 0.98) 0%, rgba(248, 239, 248, 0.96) 44%, rgba(236, 228, 246, 0.94) 76%, rgba(226, 232, 249, 0.92) 100%);
+  box-shadow: 0 22px 58px rgba(167, 152, 197, 0.15);
   backdrop-filter: blur(10px);
 }
 
 .dream-card-soft {
   border: 1px solid rgba(255, 255, 255, 0.8);
   background:
-    linear-gradient(160deg, rgba(255, 253, 250, 0.99) 0%, rgba(252, 243, 249, 0.97) 46%, rgba(243, 233, 248, 0.95) 78%, rgba(232, 236, 248, 0.94) 100%);
-  box-shadow: 0 18px 44px rgba(156, 140, 189, 0.14);
+    linear-gradient(160deg, rgba(255, 252, 251, 0.99) 0%, rgba(249, 240, 248, 0.97) 46%, rgba(239, 229, 247, 0.95) 78%, rgba(228, 233, 248, 0.94) 100%);
+  box-shadow: 0 18px 44px rgba(162, 146, 194, 0.14);
   backdrop-filter: blur(10px);
 }
 
 .dream-card-deep {
   border: 1px solid rgba(255, 255, 255, 0.54);
-  background: linear-gradient(160deg, rgba(114, 118, 195, 0.98) 0%, rgba(142, 138, 212, 0.96) 52%, rgba(215, 197, 238, 0.94) 100%);
-  box-shadow: 0 24px 58px rgba(122, 120, 187, 0.26);
+  background: linear-gradient(160deg, rgba(200, 181, 239, 0.98) 0%, rgba(166, 147, 222, 0.96) 52%, rgba(138, 123, 206, 0.94) 100%);
+  box-shadow: 0 24px 58px rgba(142, 130, 199, 0.26);
 }
 
 .gem-sparkles {
