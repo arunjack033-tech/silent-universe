@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReferenceBirthdayIntro } from "@/components/romantic/ReferenceBirthdayIntro";
 
 type HeartConfig = { id: number; left: number; size: number; duration: number; delay: number };
@@ -315,13 +315,94 @@ function PrimaryButton({ label, onClick, tone = "dark" }: { label: string; onCli
 }
 
 function ScratchCard({ label, revealed, onReveal, language }: { label: string; revealed: boolean; onReveal: () => void; language: Language }) {
-  const scratchLabel = language === "ta" ? "தேய்த்து திற" : "Scratch";
-  const tapLabel = language === "ta" ? "தொட்டு திற" : "Tap to reveal";
-  const revealedLabel = language === "ta" ? "திறந்தது" : "Revealed";
-  return <button type="button" onClick={onReveal} className="group relative min-h-[7.6rem] overflow-hidden rounded-[1.45rem] text-left" aria-pressed={revealed}><div className={`dream-card-soft absolute inset-0 transition duration-500 ${revealed ? "scale-[1.02] opacity-0" : "opacity-100"}`}><div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0),rgba(255,255,255,0.22))]" /><div className="absolute inset-x-5 top-4 h-[2px] rounded-full bg-white/70" /><div className="flex h-full flex-col items-center justify-center px-3 text-center"><p className="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-[#aa8ebd]">{scratchLabel}</p><p className="mt-3 text-3xl text-[#d987ac]">{LOVE_ICON}</p><p className="mt-2 text-xs leading-5 text-[#7b6e8f]">{tapLabel}</p></div></div><div className={`dream-card-deep relative flex min-h-[7.6rem] flex-col items-center justify-center px-3 py-4 text-center text-white transition duration-500 ${revealed ? "opacity-100" : "opacity-0"}`}><p className="text-[0.65rem] uppercase tracking-[0.32em] text-white/65">{revealedLabel}</p><p className="mt-3 text-2xl">{LOVE_ICON}</p><p className="mt-2 text-sm font-semibold leading-5">{label}</p></div></button>;
-}
+  const scratchLabel = language === "ta" ? "Scratch" : "Scratch";
+  const dragLabel = language === "ta" ? "Scratch panni thira" : "Scratch to reveal";
+  const revealedLabel = language === "ta" ? "Opened" : "Revealed";
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const scratchingRef = useRef(false);
+  const revealedRef = useRef(revealed);
 
-function LanguageToggle({ language, onChange, tamilLabel, englishLabel }: { language: Language; onChange: (language: Language) => void; tamilLabel: string; englishLabel: string }) {
+  useEffect(() => {
+    revealedRef.current = revealed;
+  }, [revealed]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const wrapper = wrapperRef.current;
+    if (!canvas || !wrapper || revealed) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = wrapper.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+    ctx.scale(dpr, dpr);
+
+    const gradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+    gradient.addColorStop(0, "rgba(255,250,255,0.98)");
+    gradient.addColorStop(0.5, "rgba(244,231,251,0.98)");
+    gradient.addColorStop(1, "rgba(228,218,244,0.98)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    const shine = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+    shine.addColorStop(0, "rgba(255,255,255,0.28)");
+    shine.addColorStop(0.5, "rgba(255,255,255,0)");
+    shine.addColorStop(1, "rgba(255,255,255,0.22)");
+    ctx.fillStyle = shine;
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    ctx.fillStyle = "rgba(170,142,189,0.96)";
+    ctx.textAlign = "center";
+    ctx.font = "600 10px sans-serif";
+    ctx.fillText(scratchLabel.toUpperCase(), rect.width / 2, 22);
+    ctx.font = "28px sans-serif";
+    ctx.fillStyle = "rgba(217,135,172,0.96)";
+    ctx.fillText(LOVE_ICON, rect.width / 2, rect.height / 2 + 10);
+    ctx.font = "12px sans-serif";
+    ctx.fillStyle = "rgba(123,110,143,0.92)";
+    ctx.fillText(dragLabel, rect.width / 2, rect.height - 18);
+  }, [dragLabel, revealed, scratchLabel]);
+
+  const eraseAt = (clientX: number, clientY: number) => {
+    const canvas = canvasRef.current;
+    const wrapper = wrapperRef.current;
+    if (!canvas || !wrapper || revealedRef.current) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const rect = wrapper.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-out";
+    const hole = ctx.createRadialGradient(x, y, 4, x, y, 18);
+    hole.addColorStop(0, "rgba(0,0,0,1)");
+    hole.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = hole;
+    ctx.beginPath();
+    ctx.arc(x, y, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    const sample = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let transparentPixels = 0;
+    for (let i = 3; i < sample.length; i += 16) {
+      if (sample[i] < 40) { transparentPixels += 1 }
+    }
+
+    const ratio = transparentPixels / (sample.length / 16);
+    if (ratio > 0.26) onReveal();
+  };
+
+  return <div ref={wrapperRef} className="group relative min-h-[7.6rem] overflow-hidden rounded-[1.45rem] text-left"><div className={`dream-card-deep relative flex min-h-[7.6rem] flex-col items-center justify-center px-3 py-4 text-center text-white transition duration-500 ${revealed ? "opacity-100" : "opacity-92"}`}><p className="text-[0.65rem] uppercase tracking-[0.32em] text-white/65">{revealedLabel}</p><p className="mt-3 text-2xl">{LOVE_ICON}</p><p className="mt-2 text-sm font-semibold leading-5">{label}</p></div>{!revealed ? <canvas ref={canvasRef} className="absolute inset-0 z-10 cursor-pointer touch-none" onPointerDown={(event) => { scratchingRef.current = true; eraseAt(event.clientX, event.clientY); }} onPointerMove={(event) => { if (!scratchingRef.current) return; eraseAt(event.clientX, event.clientY); }} onPointerUp={() => { scratchingRef.current = false; }} onPointerLeave={() => { scratchingRef.current = false; }} /> : null}</div>;
+}function LanguageToggle({ language, onChange, tamilLabel, englishLabel }: { language: Language; onChange: (language: Language) => void; tamilLabel: string; englishLabel: string }) {
   return <div className="flex items-center gap-1 rounded-full bg-white/88 p-1 shadow-[0_10px_24px_rgba(149,129,198,0.16)]"><button type="button" onClick={() => onChange("ta")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "ta" ? "bg-[linear-gradient(180deg,#f5d8ef,#eec4e4)] text-[#7a6b9b]" : "text-[#7b6d98]"}`}>{tamilLabel}</button><button type="button" onClick={() => onChange("en")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "en" ? "bg-[linear-gradient(180deg,#7c71b4,#62578f)] text-white" : "text-[#7b6d98]"}`}>{englishLabel}</button></div>;
 }
 
@@ -378,7 +459,114 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
     { right: "24%", bottom: "18%", delay: "0.8s" },
   ];
 
-  return <MobileShell step={3} eyebrow={t.envelopeEyebrow} title={t.envelopeTitle} description={t.envelopeDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} showLiveHearts={!opened}><div className="flex h-full flex-col">{opened ? <div className="dream-card-soft relative flex h-full flex-col overflow-hidden rounded-[2.1rem] p-5"><div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-white/92" /><div className="drip-left pointer-events-none absolute top-0 left-0 h-20 w-1/2 bg-white/94" /><div className="drip-right pointer-events-none absolute top-0 right-0 h-20 w-1/2 bg-white/94" /><div className="relative z-10 mt-12 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.35em] text-[#8aa5de]">{t.hiddenNote}</p><span className="rounded-full bg-white/80 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#b07db8]">{t.openedWithLove}</span></div><div className="letter-paper relative z-10 mt-4 flex-1 rounded-[1.8rem] p-5"><p className="text-xs uppercase tracking-[0.3em] text-[#d68cb0]">{t.letterTo}</p><div className="mt-4 space-y-4 overflow-y-auto pr-1 text-[0.95rem] leading-7 text-[#645875]">{longLetter.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></div><div className="relative z-10 mt-4"><PrimaryButton label={t.nextMemory} onClick={onNext} /></div></div> : <div className="flex h-full flex-col gap-4"><div className="dream-card-soft rounded-[1.7rem] px-4 py-4 text-center shadow-[0_14px_34px_rgba(144,123,164,0.12)]"><p className="text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-[#a18fb6]">{t.hiddenNote}</p><p className="mt-3 text-sm leading-6 text-[#645875]">{t.hiddenText}</p></div><button type="button" onClick={() => setOpened(true)} className="envelope-pulse relative mx-auto flex h-[17.5rem] w-full items-center justify-center overflow-hidden rounded-[2.25rem] border border-white/25 bg-[radial-gradient(circle_at_center,#fff7ef_0%,#ffd8ba_12%,#8a92cf_40%,#495c9d_72%,#223066_100%)] shadow-[0_14px_40px_rgba(0,0,0,0.14),0_30px_70px_rgba(46,59,113,0.4),0_0_90px_rgba(255,208,171,0.28)]" aria-label={t.openEnvelopeNoteAria}><span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.03)_38%,rgba(9,20,60,0.16)_100%)]" /><span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,223,184,0.34)_0%,rgba(255,223,184,0.14)_24%,transparent_50%)]" /><span className="pointer-events-none absolute left-1/2 top-4 h-[2px] w-24 -translate-x-1/2 rounded-full bg-white/45" />{ornamentSparkles.map((sparkle, index) => <span key={index} className="gem-sparkles absolute text-[0.8rem] text-[#f4d88c] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]" style={{ left: sparkle.left, right: sparkle.right, top: sparkle.top, bottom: sparkle.bottom, animationDelay: sparkle.delay }}>{"\u2726"}</span>)}{ornamentHearts.map((heart, index) => <span key={index} className={`live-heart absolute text-[#ff577d] ${heart.size}`} style={{ left: heart.left, right: heart.right, top: heart.top, bottom: heart.bottom, animationDelay: heart.delay, animationDuration: "3.6s" }}>{"\u2665"}</span>)}<div className="relative z-10 flex h-[11.8rem] w-[13.6rem] items-center justify-center"><div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(255,241,214,0.84),rgba(255,241,214,0.05)_72%)] blur-xl" /><div className="envelope-shell relative h-[9.35rem] w-[12.2rem] overflow-hidden rounded-[1.35rem] border border-white/58 bg-[linear-gradient(180deg,rgba(255,250,247,0.98)_0%,rgba(244,232,255,0.92)_100%)] shadow-[0_22px_38px_rgba(255,236,206,0.34)]"><div className="absolute inset-x-0 bottom-0 h-[58%] bg-[linear-gradient(180deg,rgba(252,243,239,0.9)_0%,rgba(236,223,247,0.96)_100%)]" /><div className="absolute inset-x-4 top-3 rounded-[0.95rem] bg-white/72 px-3 py-2 text-center shadow-[0_10px_20px_rgba(188,161,194,0.18)]"><p className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-[#cb8177]">{t.tapToOpen}</p><p className="mt-1 text-[0.72rem] leading-5 text-[#72637f]">{fromValue || t.fromFallback}</p></div><div className="absolute inset-x-0 top-0 h-[54%] origin-top envelope-flap bg-[linear-gradient(180deg,rgba(255,249,245,1)_0%,rgba(238,225,248,0.96)_100%)]" /><div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_49.3%,rgba(186,164,213,0.34)_49.6%,transparent_50.2%),linear-gradient(225deg,transparent_49.3%,rgba(186,164,213,0.34)_49.6%,transparent_50.2%)]" /><div className="absolute inset-x-0 bottom-0 h-[58%] [clip-path:polygon(0_100%,50%_42%,100%_100%)] border-t border-[rgba(176,154,206,0.38)] bg-[linear-gradient(180deg,rgba(245,232,250,0.8)_0%,rgba(230,214,243,0.96)_100%)]" /><div className="absolute left-1/2 top-[51%] h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/60 bg-[radial-gradient(circle_at_35%_35%,#fff5e8_0%,#f2c6a7_56%,#d47c78_100%)] shadow-[0_8px_18px_rgba(212,124,120,0.22)]" /></div></div></button><div className="dream-card-soft rounded-[1.5rem] p-4 text-sm leading-6 text-[#74688a]">{t.envelopeHelper}</div><div className="mt-auto w-full"><PrimaryButton label={t.envelopeFirst} onClick={() => setOpened(true)} /></div></div>}</div></MobileShell>;
+  return (
+    <MobileShell
+      step={3}
+      eyebrow={t.envelopeEyebrow}
+      title={t.envelopeTitle}
+      description={t.envelopeDescription}
+      onBack={onBack}
+      language={language}
+      onLanguageChange={onLanguageChange}
+      showLiveHearts={!opened}
+    >
+      <div className="flex h-full flex-col">
+        {opened ? (
+          <div className="dream-card-soft relative flex h-full flex-col overflow-hidden rounded-[2.1rem] p-5">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-white/92" />
+            <div className="drip-left pointer-events-none absolute left-0 top-0 h-20 w-1/2 bg-white/94" />
+            <div className="drip-right pointer-events-none absolute right-0 top-0 h-20 w-1/2 bg-white/94" />
+            <div className="relative z-10 mt-12 flex items-center justify-between">
+              <p className="text-xs uppercase tracking-[0.35em] text-[#8aa5de]">{t.hiddenNote}</p>
+              <span className="rounded-full bg-white/80 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#b07db8]">
+                {t.openedWithLove}
+              </span>
+            </div>
+            <div className="letter-paper relative z-10 mt-4 flex-1 rounded-[1.8rem] p-5">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#d68cb0]">{t.letterTo}</p>
+              <div className="mt-4 space-y-4 overflow-y-auto pr-1 text-[0.95rem] leading-7 text-[#645875]">
+                {longLetter.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </div>
+            <div className="relative z-10 mt-4">
+              <PrimaryButton label={t.nextMemory} onClick={onNext} />
+            </div>
+          </div>
+        ) : (
+          <div className="flex h-full flex-col gap-4">
+            <div className="dream-card-soft rounded-[1.7rem] px-4 py-4 text-center shadow-[0_14px_34px_rgba(144,123,164,0.12)]">
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-[#a18fb6]">{t.hiddenNote}</p>
+              <p className="mt-3 text-sm leading-6 text-[#645875]">{t.hiddenText}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setOpened(true)}
+              className="envelope-pulse relative mx-auto flex h-[17.5rem] w-full items-center justify-center overflow-hidden rounded-[2.25rem] border border-white/25 bg-[radial-gradient(circle_at_center,#fff7ef_0%,#ffd8ba_12%,#8a92cf_40%,#495c9d_72%,#223066_100%)] shadow-[0_14px_40px_rgba(0,0,0,0.14),0_30px_70px_rgba(46,59,113,0.4),0_0_90px_rgba(255,208,171,0.28)]"
+              aria-label={t.openEnvelopeNoteAria}
+            >
+              <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.03)_38%,rgba(9,20,60,0.16)_100%)]" />
+              <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,223,184,0.34)_0%,rgba(255,223,184,0.14)_24%,transparent_50%)]" />
+              <span className="pointer-events-none absolute left-1/2 top-4 h-[2px] w-24 -translate-x-1/2 rounded-full bg-white/45" />
+
+              {ornamentSparkles.map((sparkle, index) => (
+                <span
+                  key={index}
+                  className="gem-sparkles absolute text-[0.8rem] text-[#f4d88c] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]"
+                  style={{ left: sparkle.left, right: sparkle.right, top: sparkle.top, bottom: sparkle.bottom, animationDelay: sparkle.delay }}
+                >
+                  {"\u2726"}
+                </span>
+              ))}
+
+              {ornamentHearts.map((heart, index) => (
+                <span
+                  key={index}
+                  className={`live-heart absolute text-[#ff577d] ${heart.size}`}
+                  style={{ left: heart.left, right: heart.right, top: heart.top, bottom: heart.bottom, animationDelay: heart.delay, animationDuration: "3.6s" }}
+                >
+                  {"\u2665"}
+                </span>
+              ))}
+
+              <div className="relative z-10 flex h-[11.8rem] w-[13.6rem] items-center justify-center">
+                <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(255,241,214,0.84),rgba(255,241,214,0.05)_72%)] blur-xl" />
+
+                <div className="relative h-[9.35rem] w-[12.2rem] overflow-hidden rounded-[1.35rem] border border-white/58 bg-[linear-gradient(180deg,rgba(255,250,247,0.98)_0%,rgba(244,232,255,0.92)_100%)] shadow-[0_22px_38px_rgba(255,236,206,0.34)]">
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0.03)_100%)]" />
+
+                  <div className="absolute inset-x-5 top-3 rounded-full bg-white/72 px-3 py-2 text-center shadow-[0_10px_20px_rgba(188,161,194,0.14)]">
+                    <p className="text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[#cb8177]">{t.tapToOpen}</p>
+                    <p className="mt-1 truncate text-[0.72rem] leading-5 text-[#72637f]">{fromValue || t.fromFallback}</p>
+                  </div>
+
+                  <div className="absolute left-1/2 top-[56%] h-[5.8rem] w-[8.25rem] -translate-x-1/2 -translate-y-1/2">
+                    <div className="absolute inset-0 rounded-[1rem] bg-[radial-gradient(circle_at_center,rgba(255,250,252,0.98),rgba(255,250,252,0.18)_70%,rgba(255,250,252,0)_100%)] blur-md" />
+                    <div className="relative h-full w-full overflow-hidden rounded-[1rem] border border-white/55 bg-[linear-gradient(180deg,rgba(255,253,255,0.99)_0%,rgba(242,233,249,0.97)_100%)] shadow-[0_16px_30px_rgba(201,184,228,0.28)]">
+                      <div className="absolute inset-0 rounded-[1rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0.05)_100%)]" />
+                      <div className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(180deg,rgba(239,228,248,0.9)_0%,rgba(223,205,242,0.95)_100%)]" />
+                      <div className="absolute left-0 bottom-0 h-[52%] w-1/2 [clip-path:polygon(0_100%,100%_10%,100%_100%)] bg-[linear-gradient(180deg,rgba(236,224,247,0.92)_0%,rgba(219,201,239,0.96)_100%)]" />
+                      <div className="absolute right-0 bottom-0 h-[52%] w-1/2 [clip-path:polygon(0_10%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(236,224,247,0.92)_0%,rgba(219,201,239,0.96)_100%)]" />
+                      <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(244,236,251,0.98)_100%)]" />
+                      <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_49.35%,rgba(193,177,220,0.2)_49.75%,transparent_50.15%),linear-gradient(225deg,transparent_49.35%,rgba(193,177,220,0.2)_49.75%,transparent_50.15%)]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            <div className="dream-card-soft rounded-[1.5rem] p-4 text-sm leading-6 text-[#74688a]">{t.envelopeHelper}</div>
+
+            <div className="mt-auto w-full">
+              <PrimaryButton label={t.envelopeFirst} onClick={() => setOpened(true)} />
+            </div>
+          </div>
+        )}
+      </div>
+    </MobileShell>
+  );
 }
 
 function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
@@ -439,3 +627,4 @@ export default function Page() {
   if (screen === 4) return <GiftRevealScreen onNext={() => setScreen(5)} onBack={() => setScreen(3)} language={language} onLanguageChange={setLanguage} />;
   return <FinalScreen onBack={() => setScreen(4)} fromValue={fromValue} language={language} onLanguageChange={setLanguage} />;
 }
+

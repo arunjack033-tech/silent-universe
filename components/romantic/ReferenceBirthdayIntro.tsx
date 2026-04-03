@@ -181,16 +181,17 @@ export function EnvelopeCard({ onOpen, ariaLabel }: { onOpen: () => void; ariaLa
           {"\u2665"}
         </span>
       ))}
-      <div className="absolute left-1/2 top-1/2 flex h-[5.7rem] w-[7.4rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1.2rem]">
-        <div className="absolute inset-0 rounded-[1.3rem] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.72),rgba(255,255,255,0.06)_72%)] blur-md" />
-        <div className="relative h-[4.35rem] w-[6.1rem] overflow-hidden rounded-[0.7rem] bg-[linear-gradient(180deg,#fffdfd_0%,#f4edfc_100%)] shadow-[0_12px_26px_rgba(178,159,214,0.24)]">
-          <div className="absolute inset-0 rounded-[0.7rem] border border-[rgba(232,225,245,0.9)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[54%] bg-[linear-gradient(180deg,rgba(245,238,250,0.94)_0%,rgba(229,214,244,0.96)_100%)]" />
-          <div className="absolute left-0 top-[51%] h-[49%] w-1/2 [clip-path:polygon(0_100%,100%_0,100%_100%)] bg-[linear-gradient(180deg,rgba(238,227,248,0.92)_0%,rgba(225,208,241,0.98)_100%)]" />
-          <div className="absolute right-0 top-[51%] h-[49%] w-1/2 [clip-path:polygon(0_0,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(238,227,248,0.92)_0%,rgba(225,208,241,0.98)_100%)]" />
-          <div className="absolute left-0 right-0 top-0 h-[53%] [clip-path:polygon(0_0,50%_78%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(241,232,251,0.98)_100%)]" />
-          <div className="absolute left-0 top-0 h-full w-full bg-[linear-gradient(135deg,transparent_49.2%,rgba(201,186,226,0.36)_49.7%,transparent_50.2%)]" />
-          <div className="absolute left-0 top-0 h-full w-full bg-[linear-gradient(225deg,transparent_49.2%,rgba(201,186,226,0.36)_49.7%,transparent_50.2%)]" />
+      <div className="absolute left-1/2 top-1/2 flex h-[5.95rem] w-[7.15rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+        <div className="absolute inset-0 rounded-[1.5rem] bg-[radial-gradient(circle_at_center,rgba(255,248,253,0.98),rgba(255,248,253,0.16)_64%,rgba(255,248,253,0)_100%)] blur-xl" />
+        <div className="relative h-[4.2rem] w-[5.72rem] overflow-hidden rounded-[0.78rem] border border-[rgba(255,255,255,0.72)] bg-[linear-gradient(180deg,rgba(255,254,255,0.99)_0%,rgba(247,242,252,0.98)_62%,rgba(239,229,248,0.97)_100%)] shadow-[0_14px_26px_rgba(194,178,224,0.28)]">
+          <div className="absolute inset-0 rounded-[0.78rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.03)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-[44%] bg-[linear-gradient(180deg,rgba(242,234,249,0.18)_0%,rgba(230,217,244,0.62)_100%)]" />
+          <div className="absolute left-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_100%,100%_14%,100%_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
+          <div className="absolute right-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_14%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-[46%] [clip-path:polygon(0_100%,50%_30%,100%_100%)] bg-[linear-gradient(180deg,rgba(240,230,249,0.3)_0%,rgba(228,214,243,0.76)_100%)]" />
+          <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(236,226,248,0.99)_100%)]" />
+          <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] border-b border-[rgba(214,197,233,0.44)]" />
+          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[rgba(217,200,235,0.55)]" />
         </div>
       </div>
     </motion.button>
