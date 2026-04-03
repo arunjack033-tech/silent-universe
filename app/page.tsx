@@ -300,6 +300,42 @@ function IntroLiveHearts() {
   );
 }
 
+function AppClouds() {
+  const clouds = [
+    { top: "10%", left: "-1%", scale: 0.78, delay: "0s", opacity: 0.64 },
+    { top: "15%", right: "8%", scale: 1.2, delay: "0.35s", opacity: 0.96 },
+    { top: "32%", right: "3%", scale: 0.76, delay: "1.1s", opacity: 0.84 },
+    { top: "44%", right: "8%", scale: 1.08, delay: "0.8s", opacity: 0.9 },
+    { bottom: "24%", left: "-1%", scale: 0.92, delay: "1.45s", opacity: 0.72 },
+    { bottom: "16%", right: "8%", scale: 0.84, delay: "1.7s", opacity: 0.82 },
+  ];
+
+  return (
+    <>
+      {clouds.map((cloud, index) => (
+        <div
+          key={index}
+          className="intro-cloud pointer-events-none absolute"
+          style={{
+            top: cloud.top,
+            right: cloud.right,
+            left: cloud.left,
+            bottom: cloud.bottom,
+            opacity: cloud.opacity,
+            transform: `scale(${cloud.scale})`,
+            animationDelay: cloud.delay,
+          }}
+        >
+          <span className="intro-cloud-puff intro-cloud-main" />
+          <span className="intro-cloud-puff intro-cloud-left" />
+          <span className="intro-cloud-puff intro-cloud-right" />
+          <span className="intro-cloud-puff intro-cloud-tail" />
+        </div>
+      ))}
+    </>
+  );
+}
+
 function ProgressDots({ step, totalSteps }: { step: number; totalSteps: number }) {
   return <div className="mb-5 flex gap-2">{Array.from({ length: totalSteps }, (_, index) => <span key={index} className={`h-1.5 flex-1 rounded-full transition-all ${index < step ? "bg-[linear-gradient(90deg,#d77767,#efb19b)]" : "bg-white/75"}`} />)}</div>;
 }
@@ -420,7 +456,7 @@ function MobileShell({ step, eyebrow, title, description, children, onBack, lang
   const shellClass = mutedIntro
     ? "bg-[linear-gradient(180deg,rgba(255,248,243,0.74)_0%,rgba(255,238,233,0.72)_38%,rgba(243,232,239,0.72)_72%,rgba(220,225,249,0.76)_100%)] shadow-[0_24px_70px_rgba(93,85,140,0.16)]"
     : "bg-[linear-gradient(180deg,rgba(255,251,253,0.8)_0%,rgba(251,240,247,0.78)_38%,rgba(241,233,247,0.76)_74%,rgba(230,234,248,0.78)_100%)] shadow-[0_22px_80px_rgba(157,145,202,0.16)]";
-  return <section className={`relative min-h-screen overflow-hidden px-4 py-5 text-[#4f3d62] ${sectionClass}`}><BackgroundHearts /><div className={`pointer-events-none absolute inset-0 ${overlayClass}`} /><div className={`pointer-events-none absolute inset-0 ${glowClass}`} />{showLiveHearts ? <IntroLiveHearts /> : null}<div className={`relative mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-sm flex-col rounded-[2.15rem] border border-white/72 p-4 backdrop-blur-xl ${shellClass}`}><div className="relative mb-4 flex items-center justify-center"><button type="button" onClick={onBack} disabled={!onBack} className={`absolute left-0 rounded-full px-3 py-1.5 text-xs font-medium transition ${onBack ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(248,241,252,0.92)_100%)] text-[#756990] shadow-sm hover:bg-white" : "cursor-default opacity-0"}`} aria-label={t.back}>{t.back}</button>{showLanguageToggle ? <LanguageToggle language={language} onChange={onLanguageChange} tamilLabel={t.languageTamil} englishLabel={t.languageEnglish} /> : <div className="w-[122px]" />}<div className="absolute right-0 rounded-full bg-[linear-gradient(180deg,#c7b3f1,#8b79d0)] px-3 py-1 text-[0.7rem] font-medium text-white shadow-[0_8px_18px_rgba(145,132,206,0.22)]">{step}/{TOTAL_STEPS}</div></div><div><p className="text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-[#d48cab]">{eyebrow}</p><p className="mt-1 text-xs text-[#8b7f9d]">{t.appLabel}</p></div><ProgressDots step={step} totalSteps={TOTAL_STEPS} /><div className="mb-6"><h1 className="max-w-[14ch] text-3xl font-semibold leading-tight text-[#5b5078]">{title}</h1><span className="sr-only">{description}</span></div><div className="flex-1">{children}</div></div></section>;
+  return <section className={`relative min-h-screen overflow-hidden px-4 py-5 text-[#4f3d62] ${sectionClass}`}><BackgroundHearts /><div className={`pointer-events-none absolute inset-0 ${overlayClass}`} /><div className={`pointer-events-none absolute inset-0 ${glowClass}`} />{showLiveHearts ? <IntroLiveHearts /> : null}<div className={`relative mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-sm flex-col rounded-[2.15rem] border border-white/72 p-4 backdrop-blur-xl ${shellClass}`}><div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[2.15rem]"><div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(255,255,255,0.26),transparent_20%),radial-gradient(circle_at_82%_14%,rgba(255,233,245,0.2),transparent_18%),radial-gradient(circle_at_76%_82%,rgba(198,222,255,0.16),transparent_20%)]" /><AppClouds /></div><div className="relative mb-4 flex items-center justify-center"><button type="button" onClick={onBack} disabled={!onBack} className={`absolute left-0 rounded-full px-3 py-1.5 text-xs font-medium transition ${onBack ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(248,241,252,0.92)_100%)] text-[#756990] shadow-sm hover:bg-white" : "cursor-default opacity-0"}`} aria-label={t.back}>{t.back}</button>{showLanguageToggle ? <LanguageToggle language={language} onChange={onLanguageChange} tamilLabel={t.languageTamil} englishLabel={t.languageEnglish} /> : <div className="w-[122px]" />}<div className="absolute right-0 rounded-full bg-[linear-gradient(180deg,#c7b3f1,#8b79d0)] px-3 py-1 text-[0.7rem] font-medium text-white shadow-[0_8px_18px_rgba(145,132,206,0.22)]">{step}/{TOTAL_STEPS}</div></div><div><p className="text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-[#d48cab]">{eyebrow}</p><p className="mt-1 text-xs text-[#8b7f9d]">{t.appLabel}</p></div><ProgressDots step={step} totalSteps={TOTAL_STEPS} /><div className="mb-6"><h1 className="max-w-[14ch] text-3xl font-semibold leading-tight text-[#5b5078]">{title}</h1><span className="sr-only">{description}</span></div><div className="relative z-20 flex-1">{children}</div></div></section>;
 }
 
 function IntroScreen({ onNext, language, onLanguageChange }: { onNext: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
@@ -491,7 +527,7 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
               </div>
             </div>
             <div className="relative z-10 mt-4">
-              <PrimaryButton label={t.nextMemory} onClick={onNext} />
+              <PrimaryButton label={t.nextMemory} onClick={onNext} className="w-full" />
             </div>
           </div>
         ) : (

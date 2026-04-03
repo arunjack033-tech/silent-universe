@@ -67,6 +67,36 @@ function IntroLiveHearts() {
   );
 }
 
+function IntroCardHearts() {
+  const hearts = [
+    { top: "18%", left: "8%", size: "text-sm", delay: "0s", duration: "3.4s" },
+    { top: "26%", right: "10%", size: "text-xs", delay: "0.7s", duration: "4.1s" },
+    { top: "53%", left: "10%", size: "text-sm", delay: "1.1s", duration: "3.6s" },
+    { bottom: "18%", right: "9%", size: "text-xs", delay: "1.7s", duration: "4s" },
+  ];
+
+  return (
+    <>
+      {hearts.map((heart, index) => (
+        <span
+          key={index}
+          className={`pointer-events-none absolute z-20 text-[#ff5d84] ${heart.size} live-heart`}
+          style={{
+            top: heart.top,
+            left: heart.left,
+            right: heart.right,
+            bottom: heart.bottom,
+            animationDelay: heart.delay,
+            animationDuration: heart.duration,
+          }}
+        >
+          {"\u2665"}
+        </span>
+      ))}
+    </>
+  );
+}
+
 function RisingHearts() {
   const hearts = [
     { left: "14%", delay: "0s", duration: "5.2s", size: "text-sm" },
@@ -191,11 +221,11 @@ export function LetterCard({ copy }: { copy: IntroCopy }) {
 }
 
 export function EnvelopeCard({ onOpen, ariaLabel }: { onOpen: () => void; ariaLabel: string }) {
-  const hearts = [
-    { left: "13%", top: "38%" },
-    { left: "20%", bottom: "24%" },
-    { right: "16%", top: "40%" },
-    { right: "20%", bottom: "26%" },
+  const sparkles = [
+    { left: "14%", top: "18%", delay: "0.2s" },
+    { right: "16%", top: "22%", delay: "0.9s" },
+    { left: "24%", bottom: "18%", delay: "1.3s" },
+    { right: "24%", bottom: "16%", delay: "0.6s" },
   ];
 
   return (
@@ -209,13 +239,13 @@ export function EnvelopeCard({ onOpen, ariaLabel }: { onOpen: () => void; ariaLa
       className="relative h-[15.4rem] w-full overflow-hidden rounded-[2rem] border border-white/65 bg-[linear-gradient(180deg,rgba(251,233,242,0.8)_0%,rgba(238,226,247,0.84)_54%,rgba(219,225,247,0.86)_100%)] shadow-[0_18px_40px_rgba(165,149,202,0.16)] backdrop-blur-[18px]"
     >
       <div className="absolute left-1/2 top-4 h-[2px] w-28 -translate-x-1/2 rounded-full bg-white/65" />
-      {hearts.map((heart, index) => (
+      {sparkles.map((sparkle, index) => (
         <span
           key={index}
-          className="absolute text-sm text-[#ff6689]"
-          style={{ left: heart.left, right: heart.right, top: heart.top, bottom: heart.bottom }}
+          className="gem-sparkles pointer-events-none absolute text-[0.82rem] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]"
+          style={{ left: sparkle.left, right: sparkle.right, top: sparkle.top, bottom: sparkle.bottom, animationDelay: sparkle.delay }}
         >
-          {"\u2665"}
+          {"\u2726"}
         </span>
       ))}
       <div className="absolute left-1/2 top-1/2 flex h-[5.95rem] w-[7.15rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
@@ -287,6 +317,7 @@ export function ReferenceBirthdayIntro({ copy, language, onLanguageChange, onOpe
         <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden rounded-[2rem]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(255,255,255,0.3),transparent_20%),radial-gradient(circle_at_82%_14%,rgba(255,233,245,0.24),transparent_18%),radial-gradient(circle_at_76%_82%,rgba(198,222,255,0.18),transparent_20%)]" />
           <IntroClouds />
+          <IntroCardHearts />
         </div>
         <Header language={language} onLanguageChange={onLanguageChange} copy={copy} />
         <motion.div {...fadeMotion(0.1)} className="relative z-10">
