@@ -488,12 +488,16 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
     { right: "17%", bottom: "26%", delay: "1.35s", size: "text-[0.8rem]" },
   ];
 
-  const ornamentSparkles = [
-    { left: "13%", top: "16%", delay: "0.35s" },
-    { right: "15%", top: "20%", delay: "1.05s" },
-    { left: "24%", bottom: "22%", delay: "1.65s" },
-    { right: "24%", bottom: "18%", delay: "0.8s" },
-  ];
+    const ornamentSparkles = [
+      { left: "13%", top: "16%", delay: "0.35s" },
+      { right: "15%", top: "20%", delay: "1.05s" },
+      { left: "24%", bottom: "22%", delay: "1.65s" },
+      { right: "24%", bottom: "18%", delay: "0.8s" },
+    ];
+    const ornamentClouds = [
+      { left: "5%", top: "20%", width: "4.4rem", height: "1.65rem", opacity: 0.78, delay: "0.2s" },
+      { right: "10%", bottom: "18%", width: "4.8rem", height: "1.8rem", opacity: 0.82, delay: "1.1s" },
+    ];
 
   return (
     <MobileShell
@@ -537,56 +541,53 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
               <p className="mt-3 text-sm leading-6 text-[#645875]">{t.hiddenText}</p>
             </div>
 
-            <div
-              className="relative mx-auto flex h-[17.5rem] w-full items-center justify-center overflow-hidden rounded-[2.25rem] border border-white/25 bg-[radial-gradient(circle_at_center,#fff7ef_0%,#ffd8ba_12%,#8a92cf_40%,#495c9d_72%,#223066_100%)] shadow-[0_14px_40px_rgba(0,0,0,0.14),0_30px_70px_rgba(46,59,113,0.4),0_0_90px_rgba(255,208,171,0.28)]"
-            >
-              <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.03)_38%,rgba(9,20,60,0.16)_100%)]" />
-              <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,223,184,0.34)_0%,rgba(255,223,184,0.14)_24%,transparent_50%)]" />
-              <span className="pointer-events-none absolute left-1/2 top-4 h-[2px] w-24 -translate-x-1/2 rounded-full bg-white/45" />
+              <button
+                type="button"
+                onClick={() => setOpened(true)}
+                aria-label={t.openEnvelopeNoteAria}
+                className="relative mx-auto block h-[15.4rem] w-full overflow-hidden rounded-[2rem]"
+              >
+                <Image
+                  src="/envelope-first-page.png"
+                  alt=""
+                  aria-hidden="true"
+                  width={1024}
+                  height={768}
+                  className="absolute inset-0 h-full w-full scale-[1.07] object-cover"
+                />
+                {ornamentClouds.map((cloud, index) => (
+                  <span
+                    key={`cloud-${index}`}
+                    className="intro-cloud pointer-events-none absolute z-10"
+                    style={{ left: cloud.left, right: cloud.right, top: cloud.top, bottom: cloud.bottom, width: cloud.width, height: cloud.height, opacity: cloud.opacity, animationDelay: cloud.delay }}
+                  >
+                    <span className="intro-cloud-puff intro-cloud-left" />
+                    <span className="intro-cloud-puff intro-cloud-main" />
+                    <span className="intro-cloud-puff intro-cloud-right" />
+                    <span className="intro-cloud-puff intro-cloud-tail" />
+                  </span>
+                ))}
 
-              {ornamentSparkles.map((sparkle, index) => (
-                <span
-                  key={index}
-                  className="gem-sparkles absolute text-[0.8rem] text-[#f4d88c] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]"
-                  style={{ left: sparkle.left, right: sparkle.right, top: sparkle.top, bottom: sparkle.bottom, animationDelay: sparkle.delay }}
-                >
-                  {"\u2726"}
-                </span>
-              ))}
+                {ornamentSparkles.map((sparkle, index) => (
+                  <span
+                    key={index}
+                    className="gem-sparkles absolute z-10 text-[0.8rem] text-[#f4d88c] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]"
+                    style={{ left: sparkle.left, right: sparkle.right, top: sparkle.top, bottom: sparkle.bottom, animationDelay: sparkle.delay }}
+                  >
+                    {"\u2726"}
+                  </span>
+                ))}
 
-              {ornamentHearts.map((heart, index) => (
-                <span
-                  key={index}
-                  className={`live-heart absolute text-[#ff577d] ${heart.size}`}
-                  style={{ left: heart.left, right: heart.right, top: heart.top, bottom: heart.bottom, animationDelay: heart.delay, animationDuration: "3.6s" }}
-                >
-                  {"\u2665"}
-                </span>
-              ))}
-
-              <div className="relative z-10 flex h-[11.8rem] w-[13.6rem] items-center justify-center">
-                <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(255,241,214,0.84),rgba(255,241,214,0.05)_72%)] blur-xl" />
-
-                <button
-                  type="button"
-                  onClick={() => setOpened(true)}
-                  aria-label={t.openEnvelopeNoteAria}
-                  className="envelope-pulse absolute left-1/2 top-1/2 flex h-[5.95rem] w-[7.15rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1rem]"
-                >
-                  <div className="absolute inset-0 rounded-[1.45rem] bg-[radial-gradient(circle_at_center,rgba(255,248,253,0.98),rgba(255,248,253,0.16)_64%,rgba(255,248,253,0)_100%)] blur-xl" />
-                  <div className="relative h-[4.15rem] w-[5.55rem] overflow-hidden rounded-[0.72rem] border border-[rgba(255,255,255,0.72)] bg-[linear-gradient(180deg,rgba(255,254,255,0.99)_0%,rgba(247,242,252,0.98)_62%,rgba(239,229,248,0.97)_100%)] shadow-[0_14px_26px_rgba(194,178,224,0.28)]">
-                    <div className="absolute inset-0 rounded-[0.72rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.03)_100%)]" />
-                    <div className="absolute inset-x-0 bottom-0 h-[44%] bg-[linear-gradient(180deg,rgba(242,234,249,0.18)_0%,rgba(230,217,244,0.62)_100%)]" />
-                    <div className="absolute left-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_100%,100%_14%,100%_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
-                    <div className="absolute right-0 bottom-0 h-[46%] w-1/2 [clip-path:polygon(0_14%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(239,229,248,0.26)_0%,rgba(226,211,242,0.72)_100%)]" />
-                    <div className="absolute inset-x-0 bottom-0 h-[46%] [clip-path:polygon(0_100%,50%_30%,100%_100%)] bg-[linear-gradient(180deg,rgba(240,230,249,0.3)_0%,rgba(228,214,243,0.76)_100%)]" />
-                    <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(236,226,248,0.99)_100%)]" />
-                    <div className="absolute inset-x-0 top-0 h-[55%] [clip-path:polygon(0_0,50%_78%,100%_0)] border-b border-[rgba(214,197,233,0.44)]" />
-                    <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[rgba(217,200,235,0.55)]" />
-                  </div>
-                </button>
-              </div>
-            </div>
+                {ornamentHearts.map((heart, index) => (
+                  <span
+                    key={index}
+                    className={`live-heart absolute z-10 text-[#ff577d] ${heart.size}`}
+                    style={{ left: heart.left, right: heart.right, top: heart.top, bottom: heart.bottom, animationDelay: heart.delay, animationDuration: "3.6s" }}
+                  >
+                    {"\u2665"}
+                  </span>
+                ))}
+              </button>
 
             <div className="dream-card-soft rounded-[1.5rem] p-4 text-sm leading-6 text-[#74688a]">{t.envelopeHelper}</div>
 

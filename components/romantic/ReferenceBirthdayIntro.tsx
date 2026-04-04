@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 type Language = "en" | "ta";
@@ -221,11 +222,12 @@ export function LetterCard({ copy }: { copy: IntroCopy }) {
 }
 
 export function EnvelopeCard({ onOpen, ariaLabel }: { onOpen: () => void; ariaLabel: string }) {
-  const sparkles = [
-    { left: "14%", top: "18%", delay: "0.2s" },
-    { right: "16%", top: "22%", delay: "0.9s" },
-    { left: "24%", bottom: "18%", delay: "1.3s" },
-    { right: "24%", bottom: "16%", delay: "0.6s" },
+  const sparkleDots = [
+    { left: "12%", top: "20%", delay: "0.2s", tone: "text-[#f3d58e]" },
+    { right: "14%", top: "24%", delay: "0.9s", tone: "text-[#f3d58e]" },
+    { left: "24%", bottom: "18%", delay: "1.2s", tone: "text-[#ff7d9f]" },
+    { right: "18%", bottom: "22%", delay: "0.6s", tone: "text-[#ff7d9f]" },
+    { right: "8%", bottom: "8%", delay: "1.6s", tone: "text-white/80" },
   ];
 
   return (
@@ -234,34 +236,27 @@ export function EnvelopeCard({ onOpen, ariaLabel }: { onOpen: () => void; ariaLa
       aria-label={ariaLabel}
       onClick={onOpen}
       {...fadeMotion(0.34)}
-      whileTap={{ scale: 0.97 }}
+      whileTap={{ scale: 0.985 }}
       whileHover={{ scale: 1.01 }}
-      className="relative h-[15.4rem] w-full overflow-hidden rounded-[2rem] border border-white/65 bg-[linear-gradient(180deg,rgba(251,233,242,0.8)_0%,rgba(238,226,247,0.84)_54%,rgba(219,225,247,0.86)_100%)] shadow-[0_18px_40px_rgba(165,149,202,0.16)] backdrop-blur-[18px]"
+      className="relative block h-[15.4rem] w-full overflow-hidden rounded-[2rem]"
     >
-      <div className="absolute left-1/2 top-4 h-[2px] w-28 -translate-x-1/2 rounded-full bg-white/65" />
-      {sparkles.map((sparkle, index) => (
+      {sparkleDots.map((item, index) => (
         <span
           key={index}
-          className="gem-sparkles pointer-events-none absolute text-[0.82rem] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]"
-          style={{ left: sparkle.left, right: sparkle.right, top: sparkle.top, bottom: sparkle.bottom, animationDelay: sparkle.delay }}
+          className={`pointer-events-none absolute z-10 text-[0.8rem] animate-[liveHeartFloat_2.8s_ease-in-out_infinite] ${item.tone}`}
+          style={{ left: item.left, right: item.right, top: item.top, bottom: item.bottom, animationDelay: item.delay }}
         >
-          {"\u2726"}
+          {item.tone.includes("#ff") ? "\u2665" : "\u2726"}
         </span>
       ))}
-      <div className="absolute left-1/2 top-1/2 flex h-[5.95rem] w-[7.15rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-        <div className="absolute inset-0 rounded-[1.5rem] bg-[radial-gradient(circle_at_center,rgba(255,248,253,0.92),rgba(255,248,253,0.12)_64%,rgba(255,248,253,0)_100%)]" />
-        <div className="relative h-[4.2rem] w-[5.72rem] overflow-hidden rounded-[0.78rem] border border-[rgba(255,255,255,0.74)] bg-[linear-gradient(180deg,rgba(255,253,255,0.99)_0%,rgba(245,239,251,0.98)_64%,rgba(237,226,248,0.97)_100%)] shadow-[0_12px_22px_rgba(187,171,217,0.24)]">
-          <div className="absolute inset-0 rounded-[0.78rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.02)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(180deg,rgba(243,236,250,0.08)_0%,rgba(227,212,243,0.74)_100%)]" />
-          <div className="absolute left-0 bottom-0 h-[47%] w-1/2 [clip-path:polygon(0_100%,100%_12%,100%_100%)] bg-[linear-gradient(180deg,rgba(240,230,248,0.12)_0%,rgba(216,198,238,0.9)_100%)]" />
-          <div className="absolute right-0 bottom-0 h-[47%] w-1/2 [clip-path:polygon(0_12%,100%_100%,0_100%)] bg-[linear-gradient(180deg,rgba(240,230,248,0.12)_0%,rgba(216,198,238,0.9)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[47%] [clip-path:polygon(0_100%,50%_30%,100%_100%)] bg-[linear-gradient(180deg,rgba(241,232,249,0.08)_0%,rgba(222,205,241,0.88)_100%)]" />
-          <div className="absolute inset-x-0 top-0 h-[56%] [clip-path:polygon(0_0,50%_80%,100%_0)] bg-[linear-gradient(180deg,rgba(255,255,255,1)_0%,rgba(234,222,247,1)_100%)]" />
-          <div className="absolute inset-x-0 top-0 h-[56%] [clip-path:polygon(0_0,50%_80%,100%_0)] border-b border-[rgba(203,184,227,0.68)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_49.48%,rgba(197,179,224,0.34)_49.9%,transparent_50.32%),linear-gradient(225deg,transparent_49.48%,rgba(197,179,224,0.34)_49.9%,transparent_50.32%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-[rgba(211,192,232,0.72)]" />
-        </div>
-      </div>
+      <Image
+        src="/envelope-first-page.png"
+        alt=""
+        aria-hidden="true"
+        width={1024}
+        height={768}
+        className="block h-full w-full object-cover"
+      />
     </motion.button>
   );
 }
