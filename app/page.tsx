@@ -352,7 +352,6 @@ function PrimaryButton({ label, onClick, tone = "dark", className = "" }: { labe
 
 function ScratchCard({ label, revealed, onReveal, language }: { label: string; revealed: boolean; onReveal: () => void; language: Language }) {
   const scratchLabel = language === "ta" ? "Scratch" : "Scratch";
-  const dragLabel = language === "ta" ? "Scratch panni thira" : "Scratch to reveal";
   const revealedLabel = language === "ta" ? "Opened" : "Revealed";
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -393,17 +392,7 @@ function ScratchCard({ label, revealed, onReveal, language }: { label: string; r
     ctx.fillStyle = shine;
     ctx.fillRect(0, 0, rect.width, rect.height);
 
-    ctx.fillStyle = "rgba(170,142,189,0.96)";
-    ctx.textAlign = "center";
-    ctx.font = "600 10px sans-serif";
-    ctx.fillText(scratchLabel.toUpperCase(), rect.width / 2, 22);
-    ctx.font = "28px sans-serif";
-    ctx.fillStyle = "rgba(217,135,172,0.96)";
-    ctx.fillText(LOVE_ICON, rect.width / 2, rect.height / 2 + 10);
-    ctx.font = "12px sans-serif";
-    ctx.fillStyle = "rgba(123,110,143,0.92)";
-    ctx.fillText(dragLabel, rect.width / 2, rect.height - 18);
-  }, [dragLabel, revealed, scratchLabel]);
+  }, [revealed, scratchLabel]);
 
   const eraseAt = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
@@ -437,10 +426,10 @@ function ScratchCard({ label, revealed, onReveal, language }: { label: string; r
     if (ratio > 0.26) onReveal();
   };
 
-  return <div ref={wrapperRef} className="group relative min-h-[7.6rem] overflow-hidden rounded-[1.45rem] text-left"><div className={`dream-card-deep relative flex min-h-[7.6rem] flex-col items-center justify-center px-3 py-4 text-center text-white transition duration-500 ${revealed ? "opacity-100" : "opacity-92"}`}><p className="text-[0.65rem] uppercase tracking-[0.32em] text-white/65">{revealedLabel}</p><p className="mt-3 text-2xl">{LOVE_ICON}</p><p className="mt-2 text-sm font-semibold leading-5">{label}</p></div>{!revealed ? <canvas ref={canvasRef} className="absolute inset-0 z-10 cursor-pointer touch-none" onPointerDown={(event) => { scratchingRef.current = true; eraseAt(event.clientX, event.clientY); }} onPointerMove={(event) => { if (!scratchingRef.current) return; eraseAt(event.clientX, event.clientY); }} onPointerUp={() => { scratchingRef.current = false; }} onPointerLeave={() => { scratchingRef.current = false; }} /> : null}</div>;
+  return <div ref={wrapperRef} className="group relative min-h-[7.6rem] overflow-hidden rounded-[1.45rem] text-left"><div className={`dream-card-deep relative flex min-h-[7.6rem] flex-col items-center justify-center px-3 py-4 text-center text-white transition duration-500 ${revealed ? "opacity-100" : "opacity-92"}`}>{revealed ? <><span className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0)_16%,rgba(255,255,255,0.18)_34%,rgba(255,230,245,0.28)_48%,rgba(255,255,255,0.08)_62%,rgba(255,255,255,0)_82%)] opacity-90" /><span className="pointer-events-none absolute -left-[18%] top-0 h-full w-[42%] rotate-[14deg] bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.24)_45%,rgba(255,255,255,0)_100%)] blur-md" /><span className="pointer-events-none absolute right-[12%] top-[18%] text-[0.82rem] text-white/85 animate-[liveHeartFloat_2.4s_ease-in-out_infinite]">✦</span><span className="pointer-events-none absolute left-[14%] bottom-[18%] text-[0.72rem] text-[#ffd7ef] animate-[liveHeartFloat_2.8s_ease-in-out_infinite]" style={{ animationDelay: "0.4s" }}>✦</span><span className="pointer-events-none absolute right-[20%] bottom-[24%] text-[0.62rem] text-[#ffeaa8] animate-[liveHeartFloat_2.6s_ease-in-out_infinite]" style={{ animationDelay: "0.9s" }}>✦</span></> : null}<p className="relative z-10 text-[0.65rem] uppercase tracking-[0.32em] text-white/65">{revealedLabel}</p><p className="relative z-10 mt-3 text-2xl">{LOVE_ICON}</p><p className="relative z-10 mt-2 text-sm font-semibold leading-5">{label}</p></div>{!revealed ? <><div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"><span className="rounded-full bg-white/35 px-4 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-[#8c79a9] backdrop-blur-sm">{scratchLabel}</span></div><canvas ref={canvasRef} className="absolute inset-0 z-10 cursor-pointer touch-none" onPointerDown={(event) => { scratchingRef.current = true; eraseAt(event.clientX, event.clientY); }} onPointerMove={(event) => { if (!scratchingRef.current) return; eraseAt(event.clientX, event.clientY); }} onPointerUp={() => { scratchingRef.current = false; }} onPointerLeave={() => { scratchingRef.current = false; }} /></> : null}</div>;
 }function LanguageToggle({ language, onChange, tamilLabel, englishLabel }: { language: Language; onChange: (language: Language) => void; tamilLabel: string; englishLabel: string }) {
-  return <div className="flex items-center gap-1 rounded-full bg-white/88 p-1 shadow-[0_10px_24px_rgba(149,129,198,0.16)]"><button type="button" onClick={() => onChange("ta")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "ta" ? "bg-[linear-gradient(180deg,#f5d8ef,#eec4e4)] text-[#7a6b9b]" : "text-[#7b6d98]"}`}>{tamilLabel}</button><button type="button" onClick={() => onChange("en")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "en" ? "bg-[linear-gradient(180deg,#7c71b4,#62578f)] text-white" : "text-[#7b6d98]"}`}>{englishLabel}</button></div>;
-}
+  return <div className="flex items-center gap-1 rounded-full bg-white/88 p-1 shadow-[0_10px_24px_rgba(149,129,198,0.16)]"><button type="button" onClick={() => onChange("ta")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "ta" ? "bg-[linear-gradient(180deg,#f5d8ef,#eec4e4)] text-[#6e5f96]" : "text-[#9a8eb2]"}`}>{tamilLabel}</button><button type="button" onClick={() => onChange("en")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "en" ? "bg-[linear-gradient(180deg,#7c71b4,#62578f)] text-white" : "text-[#9a8eb2]"}`}>{englishLabel}</button></div>;
+  }
 
 function MobileShell({ step, eyebrow, title, description, children, onBack, language, onLanguageChange, showLanguageToggle = true, showLiveHearts = false, mutedIntro = false }: { step: number; eyebrow: string; title: string; description: string; children: React.ReactNode; onBack?: () => void; language: Language; onLanguageChange: (language: Language) => void; showLanguageToggle?: boolean; showLiveHearts?: boolean; mutedIntro?: boolean }) {
   const t = getActiveCopy(language);
@@ -466,7 +455,7 @@ function IntroScreen({ onNext, language, onLanguageChange }: { onNext: () => voi
 
 function LetterFormScreen({ onNext, onBack, fromValue, setFromValue, loveValue, setLoveValue, language, onLanguageChange }: { onNext: () => void; onBack: () => void; fromValue: string; setFromValue: (value: string) => void; loveValue: string; setLoveValue: (value: string) => void; language: Language; onLanguageChange: (language: Language) => void }) {
   const t = getActiveCopy(language);
-  return <MobileShell step={2} eyebrow={t.letterEyebrow} title={t.letterTitle} description={t.letterDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} showLiveHearts><div className="flex h-full flex-col gap-4"><div className="dream-card-soft letter-paper rounded-[1.95rem] p-5"><div className="mb-4 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.3em] text-[#d68cb0]">{t.letterTo}</p><span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span></div><p className="text-base leading-7 text-[#645875]">{t.letterText}</p><div className="mt-5 space-y-4"><input type="text" placeholder={t.fromPlaceholder} value={fromValue} onChange={(event) => setFromValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /><input type="text" placeholder={t.linePlaceholder} value={loveValue} onChange={(event) => setLoveValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /></div><div className="dream-card-soft mt-5 rounded-[1.35rem] p-3 text-sm leading-6 text-[#6d627f]">{t.previewPrefix} {fromValue || t.previewFallbackName} {t.previewMiddle} &ldquo;{loveValue || t.previewFallbackLine}&rdquo;</div></div><PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" /></div></MobileShell>;
+  return <MobileShell step={2} eyebrow={t.letterEyebrow} title={t.letterTitle} description={t.letterDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} showLiveHearts><div className="flex h-full flex-col gap-4"><div className="dream-card-soft letter-paper rounded-[1.95rem] p-5"><div className="mb-4 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p><span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span></div><p className="text-base leading-7 text-[#645875]">{t.letterText}</p><div className="mt-5 space-y-4"><input type="text" placeholder={t.fromPlaceholder} value={fromValue} onChange={(event) => setFromValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /><input type="text" placeholder={t.linePlaceholder} value={loveValue} onChange={(event) => setLoveValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /></div><div className="dream-card-soft mt-5 rounded-[1.35rem] p-3 text-sm leading-6 text-[#6d627f]">{t.previewPrefix} {fromValue || t.previewFallbackName} {t.previewMiddle} &ldquo;{loveValue || t.previewFallbackLine}&rdquo;</div></div><PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" /></div></MobileShell>;
 }
 
 function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, onLanguageChange }: { onNext: () => void; onBack: () => void; fromValue: string; loveValue: string; language: Language; onLanguageChange: (language: Language) => void }) {
@@ -522,8 +511,8 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
                 {t.openedWithLove}
               </span>
             </div>
-            <div className="letter-paper relative z-10 mt-4 flex-1 rounded-[1.8rem] p-5">
-              <p className="text-xs uppercase tracking-[0.3em] text-[#d68cb0]">{t.letterTo}</p>
+              <div className="letter-paper relative z-10 mt-4 flex-1 rounded-[1.8rem] p-5">
+                <p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p>
               <div className="mt-4 space-y-4 overflow-y-auto pr-1 text-[0.95rem] leading-7 text-[#645875]">
                 {longLetter.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
