@@ -688,7 +688,7 @@ export default function Page() {
       {/* Play/Pause button at top right */}
       <button
         onClick={toggleAudio}
-        style={{ position: "absolute", top: 18, left: 18, zIndex: 50, background: "rgba(255,255,255,0.85)", borderRadius: "50%", border: "none", width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+        style={{ position: "absolute", top: 21, left: 24, zIndex: 50, background: "rgba(255,255,255,0.85)", borderRadius: "50%", border: "none", width: 48, height: 48, padding: 8, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
         aria-label={isPlaying ? "Pause music" : "Play music"}
       >
         {isPlaying ? (
