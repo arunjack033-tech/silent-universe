@@ -300,14 +300,31 @@ function IntroLiveHearts() {
   );
 }
 
+
 function AppClouds() {
+  // Bigger and more clouds for a dreamy effect
   const clouds = [
-    { top: "10%", left: "-1%", scale: 0.78, delay: "0s", opacity: 0.64 },
-    { top: "15%", right: "8%", scale: 1.2, delay: "0.35s", opacity: 0.96 },
-    { top: "32%", right: "3%", scale: 0.76, delay: "1.1s", opacity: 0.84 },
-    { top: "44%", right: "8%", scale: 1.08, delay: "0.8s", opacity: 0.9 },
-    { bottom: "24%", left: "-1%", scale: 0.92, delay: "1.45s", opacity: 0.72 },
-    { bottom: "16%", right: "8%", scale: 0.84, delay: "1.7s", opacity: 0.82 },
+    { top: "8%", left: "-5%", scale: 1.6 },
+    { top: "18%", left: "12%", scale: 1.3 },
+    { top: "28%", left: "28%", scale: 1.1 },
+    { top: "38%", left: "44%", scale: 1.5 },
+    { top: "48%", left: "60%", scale: 1.2 },
+    { top: "58%", left: "76%", scale: 1.4 },
+    { top: "68%", left: "88%", scale: 1.7 },
+    { top: "20%", left: "70%", scale: 1.2 },
+    { top: "60%", left: "20%", scale: 1.3 },
+    { top: "80%", left: "50%", scale: 1.5 },
+    { top: "10%", left: "80%", scale: 1.1 },
+    { top: "85%", left: "10%", scale: 1.4 },
+    // Extra clouds for denser effect
+    { top: "25%", left: "5%", scale: 1.2 },
+    { top: "55%", left: "35%", scale: 1.3 },
+    { top: "75%", left: "65%", scale: 1.1 },
+    { top: "35%", left: "85%", scale: 1.4 },
+    { top: "65%", left: "55%", scale: 1.2 },
+    { top: "15%", left: "45%", scale: 1.3 },
+    { top: "45%", left: "75%", scale: 1.1 },
+    { top: "70%", left: "25%", scale: 1.2 },
   ];
 
   return (
@@ -318,12 +335,8 @@ function AppClouds() {
           className="intro-cloud pointer-events-none absolute"
           style={{
             top: cloud.top,
-            right: cloud.right,
             left: cloud.left,
-            bottom: cloud.bottom,
-            opacity: cloud.opacity,
             transform: `scale(${cloud.scale})`,
-            animationDelay: cloud.delay,
           }}
         >
           <span className="intro-cloud-puff intro-cloud-main" />
@@ -641,11 +654,17 @@ export default function Page() {
   const [loveValue, setLoveValue] = useState("");
   const [language, setLanguage] = useState<Language>("en");
 
-  if (screen === 0) return <IntroScreen onNext={() => setScreen(1)} language={language} onLanguageChange={setLanguage} />;
-  if (screen === 1) return <LetterFormScreen onNext={() => setScreen(2)} onBack={() => setScreen(0)} fromValue={fromValue} setFromValue={setFromValue} loveValue={loveValue} setLoveValue={setLoveValue} language={language} onLanguageChange={setLanguage} />;
-  if (screen === 2) return <EnvelopeRevealScreen onNext={() => setScreen(3)} onBack={() => setScreen(1)} fromValue={fromValue} loveValue={loveValue} language={language} onLanguageChange={setLanguage} />;
-  if (screen === 3) return <ExploreScreen onNext={() => setScreen(4)} onBack={() => setScreen(2)} language={language} onLanguageChange={setLanguage} />;
-  if (screen === 4) return <GiftRevealScreen onNext={() => setScreen(5)} onBack={() => setScreen(3)} language={language} onLanguageChange={setLanguage} />;
-  return <FinalScreen onBack={() => setScreen(4)} fromValue={fromValue} language={language} onLanguageChange={setLanguage} />;
+  // Render clouds on all screens
+  return (
+    <div style={{ position: "relative", minHeight: "100vh", width: "100vw", overflow: "hidden" }}>
+      <AppClouds />
+      {screen === 0 && <IntroScreen onNext={() => setScreen(1)} language={language} onLanguageChange={setLanguage} />}
+      {screen === 1 && <LetterFormScreen onNext={() => setScreen(2)} onBack={() => setScreen(0)} fromValue={fromValue} setFromValue={setFromValue} loveValue={loveValue} setLoveValue={setLoveValue} language={language} onLanguageChange={setLanguage} />}
+      {screen === 2 && <EnvelopeRevealScreen onNext={() => setScreen(3)} onBack={() => setScreen(1)} fromValue={fromValue} loveValue={loveValue} language={language} onLanguageChange={setLanguage} />}
+      {screen === 3 && <ExploreScreen onNext={() => setScreen(4)} onBack={() => setScreen(2)} language={language} onLanguageChange={setLanguage} />}
+      {screen === 4 && <GiftRevealScreen onNext={() => setScreen(5)} onBack={() => setScreen(3)} language={language} onLanguageChange={setLanguage} />}
+      {screen === 5 && <FinalScreen onBack={() => setScreen(4)} fromValue={fromValue} language={language} onLanguageChange={setLanguage} />}
+    </div>
+  );
 }
 
