@@ -46,8 +46,8 @@ function getLongLetter(language: Language, fromValue: string, loveValue: string)
 
 function getScratchRewards(language: Language) {
   return language === "ta"
-    ? ["காலை காபி டேட்", "லாங் டிரைவ்", "மூவி நைட்", "சீக்ரெட் கிஃப்ட்", "சிறிய லவ் நோட்", "பிடித்த டின்னர்", "இரவு நடை", "ஹக் கூப்பன்", "சர்ப்ரைஸ் பிளான்", "முத்தம் பாஸ்"]
-    : ["Coffee Date", "Long Drive", "Movie Night", "Secret Gift", "Love Note", "Favorite Dinner", "Night Walk", "Hug Coupon", "Surprise Plan", "Kiss Pass"];
+    ? ["லவ் கிஃப்ட்", "சேலை", "ஹேர் கிளிப்", "நெக் செயின்", "ப்யூட்டி கிட்ட்", "அணைப்பு", "முத்தம்", "காதல் கடிதம்"]
+    : ["Love Gift", "Saree", "Hair Clip", "Neck Chain", "Face kit", "Hug", "Kiss", "Love Letter"];
 }
 
 const copy: Record<Language, Copy> = {
