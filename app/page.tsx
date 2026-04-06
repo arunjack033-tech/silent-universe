@@ -604,20 +604,22 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
 }
 
 function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
+
   const t = getActiveCopy(language);
   const [activePhoto, setActivePhoto] = useState(1);
-  const slideCount = 3;
-  const memorySlides = language === "ta"
-    ? [
-        { src: "/memory-demo-1.jpg", alt: "Memory slide one", message: "இந்தப் படம் வந்தவுடன் அந்த நாள் சிரிப்பு முதலில் நினைவுக்கு வருகிறது." },
-        { src: "/memory-demo-2.jpg", alt: "Memory slide two", message: "இது போன்ற ஒவ்வொரு தருணமும், உன்னுடன் இருந்த நினைவுகளை இன்னும் அருமையாக்குகிறது." },
-        { src: "/memory-demo-3.jpg", alt: "Memory slide three", message: "இது ஒரு சாதாரண படம் அல்ல; என் மனம் மீண்டும் திரும்பிப் பார்க்கும் ஒரு சிறிய நினைவு." },
-      ]
-    : [
-        { src: "/memory-demo-1.jpg", alt: "Memory slide one", message: "This photo brings back the first soft smile that stayed with me from that day." },
-        { src: "/memory-demo-2.jpg", alt: "Memory slide two", message: "Moments like this quietly turn ordinary time with you into something precious." },
-        { src: "/memory-demo-3.jpg", alt: "Memory slide three", message: "This is not just a photo, it is one of those little memories my heart revisits often." },
-      ];
+  const slideCount = 10;
+  // New photo list from asset folder, 01 to 10
+  const memorySlides = Array.from({ length: 10 }, (_, i) => {
+    const num = (i + 1).toString().padStart(2, "0");
+    return {
+      src: `/memory-${num}.jpeg`,
+      alt: `Memory photo ${num}`,
+      message:
+        language === "ta"
+          ? `நினைவுகள் படம் ${num}`
+          : `Memory photo ${num}`,
+    };
+  });
 
   useEffect(() => {
     let currentIndex = 0;
@@ -625,13 +627,49 @@ function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext:
       currentIndex = (currentIndex + 1) % slideCount;
       setActivePhoto(currentIndex + 1);
     }, 1800);
-
     return () => window.clearInterval(interval);
   }, [language]);
 
   const photoClasses = "absolute inset-0 overflow-hidden rounded-[1.6rem] border-[6px] border-white bg-white shadow-[0_18px_38px_rgba(179,143,190,0.28)] transition-all duration-700";
 
-  return <MobileShell step={4} eyebrow={t.exploreEyebrow} title={t.exploreTitle} description={t.exploreDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft relative overflow-hidden rounded-[2rem] p-4"><div className="relative mx-auto h-64 w-full max-w-[14.2rem]">{memorySlides.map((slide, index) => <div key={slide.src} className={`${photoClasses} ${activePhoto === index + 1 ? "translate-y-0 scale-100 opacity-100" : "translate-y-6 scale-95 opacity-0"}`}><Image src={slide.src} alt={slide.alt} width={460} height={560} className="h-full w-full object-cover" /></div>)}</div><div className="mt-4 px-2 pb-1 text-center"><p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#bf82ae]">{t.loveBadge}</p>{memorySlides.map((slide, index) => <p key={slide.message} className={`mt-3 text-sm leading-6 text-[#756a89] transition-all duration-500 ${activePhoto === index + 1 ? "block opacity-100" : "hidden opacity-0"}`}>{slide.message}</p>)}</div></div><PrimaryButton label={t.revealSurprise} onClick={onNext} tone="rose" /></div></MobileShell>;
+  return (
+    <MobileShell
+      step={4}
+      eyebrow={t.exploreEyebrow}
+      title={t.exploreTitle}
+      description={t.exploreDescription}
+      onBack={onBack}
+      language={language}
+      onLanguageChange={onLanguageChange}
+    >
+      <div className="flex h-full flex-col gap-4">
+        <div className="dream-card-soft relative overflow-hidden rounded-[2rem] p-4">
+          <div className="relative mx-auto h-64 w-full max-w-[14.2rem]">
+            {memorySlides.map((slide, index) => (
+              <div
+                key={slide.src}
+                className={`${photoClasses} ${activePhoto === index + 1 ? "translate-y-0 scale-100 opacity-100" : "translate-y-6 scale-95 opacity-0"}`}
+              >
+                <Image src={slide.src} alt={slide.alt} width={460} height={560} className="h-full w-full object-cover" />
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 px-2 pb-1 text-center">
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#bf82ae]">{t.loveBadge}</p>
+            {memorySlides.map((slide, index) => (
+              <p
+                key={slide.message}
+                className={`mt-3 text-sm leading-6 text-[#756a89] transition-all duration-500 ${activePhoto === index + 1 ? "block opacity-100" : "hidden opacity-0"}`}
+              >
+                {slide.message}
+              </p>
+            ))}
+          </div>
+        </div>
+        <PrimaryButton label={t.revealSurprise} onClick={onNext} tone="rose" />
+      </div>
+    </MobileShell>
+  );
 }
 
 function GiftRevealScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
