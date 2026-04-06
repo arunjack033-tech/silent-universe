@@ -653,10 +653,52 @@ export default function Page() {
   const [fromValue, setFromValue] = useState("");
   const [loveValue, setLoveValue] = useState("");
   const [language, setLanguage] = useState<Language>("en");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
 
-  // Render clouds on all screens
+  // Play/pause handler
+  const toggleAudio = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) {
+      audio.play();
+      setIsPlaying(true);
+    } else {
+      audio.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  // Keep isPlaying state in sync if user interacts with native controls
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    return () => {
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+    };
+  }, []);
+
   return (
     <div style={{ position: "relative", minHeight: "100vh", width: "100vw", overflow: "hidden" }}>
+      {/* Play/Pause button at top right */}
+      <button
+        onClick={toggleAudio}
+        style={{ position: "absolute", top: 18, left: 18, zIndex: 50, background: "rgba(255,255,255,0.85)", borderRadius: "50%", border: "none", width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+        aria-label={isPlaying ? "Pause music" : "Play music"}
+      >
+        {isPlaying ? (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="6" y="5" width="4" height="14" rx="2" fill="#a86ad6"/><rect x="14" y="5" width="4" height="14" rx="2" fill="#a86ad6"/></svg>
+        ) : (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 5v14l11-7L7 5z" fill="#a86ad6"/></svg>
+        )}
+      </button>
+      {/* Background audio element */}
+      <audio ref={audioRef} src="/audio/birthday-song.mpeg" loop preload="auto" />
       <AppClouds />
       {screen === 0 && <IntroScreen onNext={() => setScreen(1)} language={language} onLanguageChange={setLanguage} />}
       {screen === 1 && <LetterFormScreen onNext={() => setScreen(2)} onBack={() => setScreen(0)} fromValue={fromValue} setFromValue={setFromValue} loveValue={loveValue} setLoveValue={setLoveValue} language={language} onLanguageChange={setLanguage} />}
