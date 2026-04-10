@@ -25,6 +25,8 @@ type IntroProps = {
   language: Language;
   onLanguageChange: (language: Language) => void;
   onOpen: () => void;
+  isPlaying: boolean;
+  onToggleAudio: () => void;
 };
 
 function fadeMotion(delay = 0) {
@@ -176,13 +178,13 @@ export function Header({
   copy: IntroCopy;
 }) {
   return (
-    <motion.div className="relative z-10 mb-6 flex items-center justify-center" {...fadeMotion(0)}>
-      <div className="flex items-center rounded-full bg-white/88 p-1 shadow-[0_12px_24px_rgba(160,146,199,0.16)] backdrop-blur-xl">
+    <motion.div className="relative z-10 mb-4 flex items-center justify-center pt-5" {...fadeMotion(0)}>
+      <div className="flex items-center gap-1 rounded-full bg-white/88 p-1 shadow-[0_10px_24px_rgba(149,129,198,0.16)]">
         <button
           type="button"
           onClick={() => onLanguageChange("ta")}
-          className={`rounded-full px-3 py-1.5 text-[0.65rem] font-semibold transition ${
-            language === "ta" ? "bg-[linear-gradient(180deg,#f6dff0_0%,#edcfe6_100%)] text-[#766795]" : "text-[#7e7199]"
+          className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+            language === "ta" ? "bg-[linear-gradient(180deg,#f5d8ef,#eec4e4)] text-[#6e5f96]" : "text-[#9a8eb2]"
           }`}
         >
           {copy.languageTamil}
@@ -190,14 +192,14 @@ export function Header({
         <button
           type="button"
           onClick={() => onLanguageChange("en")}
-          className={`rounded-full px-3 py-1.5 text-[0.65rem] font-semibold transition ${
-            language === "en" ? "bg-[linear-gradient(180deg,#7d73b7_0%,#64598f_100%)] text-white" : "text-[#7e7199]"
+          className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+            language === "en" ? "bg-[linear-gradient(180deg,#7c71b4,#62578f)] text-white" : "text-[#9a8eb2]"
           }`}
         >
           {copy.languageEnglish}
         </button>
       </div>
-      <div className="absolute right-0 top-0 rounded-full bg-[linear-gradient(180deg,#7f74b8,#655993)] px-3 py-1.5 text-[0.65rem] font-semibold text-white shadow-[0_10px_20px_rgba(110,102,170,0.22)]">
+      <div className="absolute right-0 shrink-0 rounded-full bg-[linear-gradient(180deg,#7f74b8,#655993)] px-2.5 py-1.5 text-[0.62rem] font-semibold text-white shadow-[0_10px_20px_rgba(110,102,170,0.22)] sm:px-3 sm:text-[0.65rem]">
         1/6
       </div>
     </motion.div>
@@ -214,8 +216,8 @@ export function LetterCard({ copy }: { copy: IntroCopy }) {
         <p className="text-[0.7rem] font-semibold uppercase tracking-[0.34em] text-[#9fa9eb]">{copy.introCardLabel}</p>
       </div>
       <div className="bg-[linear-gradient(180deg,rgba(247,226,241,0.66)_0%,rgba(232,224,248,0.74)_62%,rgba(214,222,248,0.78)_100%)] px-5 pb-5 pt-6">
-        <p className="max-w-[12ch] text-[2.06rem] font-bold leading-[1.06] tracking-[-0.04em] text-[#7e86e2]">{copy.introCardText}</p>
-        <p className="mt-4 max-w-[18ch] text-sm leading-7 text-[#8fa1ea]">{copy.introCardSubtext}</p>
+        <p className="max-w-[11ch] break-words text-[clamp(1.8rem,7vw,2.06rem)] font-bold leading-[1.04] tracking-[-0.04em] text-[#7e86e2] sm:max-w-[12ch]">{copy.introCardText}</p>
+        <p className="mt-4 max-w-[22ch] text-[0.92rem] leading-6 text-[#8fa1ea] sm:max-w-[18ch] sm:text-sm sm:leading-7">{copy.introCardSubtext}</p>
       </div>
     </motion.section>
   );
@@ -238,7 +240,7 @@ export function EnvelopeCard({ onOpen, ariaLabel }: { onOpen: () => void; ariaLa
       {...fadeMotion(0.34)}
       whileTap={{ scale: 0.985 }}
       whileHover={{ scale: 1.01 }}
-      className="relative block h-[15.4rem] w-full overflow-hidden rounded-[2rem]"
+      className="relative block aspect-[10/7] w-full overflow-hidden rounded-[2rem] sm:h-[15.4rem] sm:aspect-auto"
     >
       {sparkleDots.map((item, index) => (
         <span
@@ -273,7 +275,7 @@ export function PromiseCard({ label, value }: { label: string; value: string }) 
   );
 }
 
-export function ReferenceBirthdayIntro({ copy, language, onLanguageChange, onOpen }: IntroProps) {
+export function ReferenceBirthdayIntro({ copy, language, onLanguageChange, onOpen, isPlaying, onToggleAudio }: IntroProps) {
   const stageCopy =
     language === "ta"
       ? {
@@ -298,14 +300,15 @@ export function ReferenceBirthdayIntro({ copy, language, onLanguageChange, onOpe
           promiseLabel: "Promise",
           promiseValue: "One tap on the envelope, and the whole love story begins.",
         };
+  void stageCopy;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(180deg,#f6dff0_0%,#f2e0f2_18%,#e6e0f5_44%,#d5dcf6_74%,#bfd1f0_100%)] px-4 py-3 text-[#57446f]">
+    <div className="relative min-h-[100svh] overflow-hidden bg-[linear-gradient(180deg,#f6dff0_0%,#f2e0f2_18%,#e6e0f5_44%,#d5dcf6_74%,#bfd1f0_100%)] px-3 py-4 text-[#57446f] sm:px-5 sm:py-6">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_14%,rgba(255,255,255,0.24),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(255,231,244,0.16),transparent_24%),radial-gradient(circle_at_78%_78%,rgba(197,220,255,0.14),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.02)_38%,rgba(159,181,230,0.05)_100%)]" />
       <IntroLiveHearts />
       <RisingHearts />
       <motion.div
-        className="relative mx-auto min-h-[calc(100vh-1.5rem)] w-full max-w-[24.375rem] rounded-[2rem] border border-white/72 bg-[linear-gradient(180deg,rgba(255,250,253,0.78)_0%,rgba(250,239,247,0.74)_36%,rgba(241,234,247,0.74)_62%,rgba(227,233,248,0.78)_100%)] px-4 pb-4 pt-3 shadow-[0_24px_84px_rgba(152,151,206,0.16)] backdrop-blur-[18px]"
+        className="relative mx-auto min-h-[calc(100svh-2rem)] w-full max-w-[30rem] rounded-[1.9rem] border border-white/72 bg-[linear-gradient(180deg,rgba(255,250,253,0.78)_0%,rgba(250,239,247,0.74)_36%,rgba(241,234,247,0.74)_62%,rgba(227,233,248,0.78)_100%)] px-4 pb-4 pt-3 shadow-[0_24px_84px_rgba(152,151,206,0.16)] backdrop-blur-[18px] sm:min-h-[calc(100svh-3rem)] sm:rounded-[2rem] sm:px-5 sm:pb-5"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
@@ -316,22 +319,34 @@ export function ReferenceBirthdayIntro({ copy, language, onLanguageChange, onOpe
           <IntroCardHearts />
         </div>
         <Header language={language} onLanguageChange={onLanguageChange} copy={copy} />
-        <motion.div {...fadeMotion(0.1)} className="relative z-10">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-[#d48cab]">{stageCopy.introEyebrow}</p>
-          <p className="mt-1 text-[0.7rem] text-[#8b7f9d]">{stageCopy.appLabel}</p>
+        <motion.div {...fadeMotion(0.1)} className="relative z-10 pb-3 pr-16">
+          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-[#d48cab]">{copy.introEyebrow}</p>
+          <p className="mt-1 text-[0.7rem] text-[#8b7f9d]">{copy.appLabel}</p>
+          <button
+            type="button"
+            onClick={onToggleAudio}
+            className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center rounded-full border-0 bg-white/88 p-2 pb-3 shadow-[0_8px_18px_rgba(110,102,170,0.14)]"
+            aria-label={isPlaying ? "Pause music" : "Play music"}
+          >
+            {isPlaying ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="6" y="5" width="4" height="14" rx="2" fill="#a86ad6"/><rect x="14" y="5" width="4" height="14" rx="2" fill="#a86ad6"/></svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 5v14l11-7L7 5z" fill="#a86ad6"/></svg>
+            )}
+          </button>
         </motion.div>
         <motion.div {...fadeMotion(0.14)} className="relative z-10 mb-6 mt-2 flex gap-2">
           {Array.from({ length: 6 }, (_, index) => (
             <span key={index} className={`h-1.5 flex-1 rounded-full ${index === 0 ? "bg-[linear-gradient(90deg,#f08db0,#f0b0c4)]" : "bg-white/75"}`} />
           ))}
         </motion.div>
-        <motion.h1 {...fadeMotion(0.18)} className="relative z-10 max-w-[8.5ch] text-[2.22rem] font-bold leading-[1.02] tracking-[-0.05em] text-[#5b5078]">
-          {stageCopy.introTitle}
+        <motion.h1 {...fadeMotion(0.18)} className="relative z-10 max-w-[10ch] break-words text-[clamp(1.75rem,5.2vw,2.4rem)] font-bold leading-[1.02] tracking-[-0.05em] text-[#5b5078]">
+          {copy.introTitle}
         </motion.h1>
         <div className="mt-6 space-y-5">
-          <LetterCard copy={{ ...copy, introCardLabel: stageCopy.introCardLabel, introCardText: stageCopy.introCardText, introCardSubtext: stageCopy.introCardSubtext }} />
+          <LetterCard copy={copy} />
           <EnvelopeCard onOpen={onOpen} ariaLabel={copy.openEnvelopeAria} />
-          <PromiseCard label={stageCopy.promiseLabel} value={stageCopy.promiseValue} />
+          <PromiseCard label={copy.promiseLabel} value={copy.promiseValue} />
         </div>
       </motion.div>
     </div>

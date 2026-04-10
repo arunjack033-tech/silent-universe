@@ -50,6 +50,33 @@ function getScratchRewards(language: Language) {
     : ["Love Gift", "Saree", "Hair Clip", "Neck Chain", "Face kit", "Hug", "Kiss", "Love Letter"];
 }
 
+function getPoemLetter(language: Language, fromValue: string, loveValue: string) {
+  if (language === "ta") {
+    return [
+      "என் தேவதைக்கு... ஒரு அழகான கவிதை...",
+      "என் வாழ்க்கையின் மிக அழகான நாளில், உன் புன்னகையின் மழையில் நனைந்தேன்.",
+      "நீ என் உலகை நிறைக்கும் ஒளியாக, என் இருளை நீக்கும் நிலவாக, என் உயிரின் ஒவ்வொரு துடிப்பிலும் வாழும் நினைவாக மாறிவிட்டாய்.",
+      "என் உள்ளம் முழுவதும் பார்த்த அந்த நொடி, என் இதயம் உனக்காகவே துடிக்கத் தொடங்கியது.",
+      "இந்த சிறிய உலகில் நீ இல்லையெனில், என் வாழ்க்கைக்கு அர்த்தமே இல்லை. உனக்காக துடிக்கும் என் இதயம் என் இதயத்தின் ஒரு பகுதி.",
+      "நம் காதலின் பயணத்தில் இது ஒரு அழகான தொடக்கம் மட்டுமே. இன்னும் பல நினைவுகளை உன்னுடன் சேர்ந்து உருவாக்க காத்திருக்கிறேன்.",
+      loveValue || "நீ என் வாழ்க்கையை இன்னும் அழகாக மாற்றுகிறாய்.",
+      `- ${fromValue || "உன்னை காதலாக நேசிக்கும் ஒருவன்"}.`,
+    ];
+  }
+
+  return [
+    "To my angel... A beautiful poem...",
+    "On the most beautiful day of my life, I was drenched in the rain of your smile.",
+    "You became the light that fills my world, the moon that removes my darkness, a memory that lives in every heartbeat of mine.",
+    "In that moment when my heart saw you completely, it began to beat only for you.",
+    "In this small world, without you, my life has no meaning. The heart that beats for you is a part of my very soul.",
+    "This is just a beautiful beginning in the journey of our love. I am waiting to create many more memories with you.",
+    loveValue || "You make my life feel softer, brighter, and more beautiful.",
+    `- ${fromValue || "Someone who loves you deeply"}.`,
+  ];
+}
+void getLongLetter;
+
 const copy: Record<Language, Copy> = {
   en: {
     appLabel: "Happy Birthday My Dear Devil",
@@ -444,7 +471,7 @@ function ScratchCard({ label, revealed, onReveal, language }: { label: string; r
   return <div className="flex items-center gap-1 rounded-full bg-white/88 p-1 shadow-[0_10px_24px_rgba(149,129,198,0.16)]"><button type="button" onClick={() => onChange("ta")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "ta" ? "bg-[linear-gradient(180deg,#f5d8ef,#eec4e4)] text-[#6e5f96]" : "text-[#9a8eb2]"}`}>{tamilLabel}</button><button type="button" onClick={() => onChange("en")} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${language === "en" ? "bg-[linear-gradient(180deg,#7c71b4,#62578f)] text-white" : "text-[#9a8eb2]"}`}>{englishLabel}</button></div>;
   }
 
-function MobileShell({ step, eyebrow, title, description, children, onBack, language, onLanguageChange, showLanguageToggle = true, showLiveHearts = false, mutedIntro = false }: { step: number; eyebrow: string; title: string; description: string; children: React.ReactNode; onBack?: () => void; language: Language; onLanguageChange: (language: Language) => void; showLanguageToggle?: boolean; showLiveHearts?: boolean; mutedIntro?: boolean }) {
+function MobileShell({ step, eyebrow, title, description, children, onBack, language, onLanguageChange, isPlaying, onToggleAudio, showLanguageToggle = true, showLiveHearts = false, mutedIntro = false }: { step: number; eyebrow: string; title: string; description: string; children: React.ReactNode; onBack?: () => void; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void; showLanguageToggle?: boolean; showLiveHearts?: boolean; mutedIntro?: boolean }) {
   const t = getActiveCopy(language);
   const sectionClass = mutedIntro
     ? "bg-[linear-gradient(180deg,#ef9fa1_0%,#eaa0a4_18%,#eab0b1_32%,#e9bfc0_46%,#e2c4d4_62%,#b3b5df_82%,#717ab8_100%)]"
@@ -459,44 +486,64 @@ function MobileShell({ step, eyebrow, title, description, children, onBack, lang
     ? "bg-[linear-gradient(180deg,rgba(255,248,243,0.74)_0%,rgba(255,238,233,0.72)_38%,rgba(243,232,239,0.72)_72%,rgba(220,225,249,0.76)_100%)] shadow-[0_24px_70px_rgba(93,85,140,0.16)]"
     : "bg-[linear-gradient(180deg,rgba(255,251,253,0.8)_0%,rgba(251,240,247,0.78)_38%,rgba(241,233,247,0.76)_74%,rgba(230,234,248,0.78)_100%)] shadow-[0_22px_80px_rgba(157,145,202,0.16)]";
   return (
-    <section className={`relative min-h-screen overflow-hidden px-4 py-5 text-[#4f3d62] ${sectionClass}`}>
+    <section className={`relative min-h-[100svh] overflow-hidden px-3 py-4 text-[#4f3d62] sm:px-5 sm:py-6 ${sectionClass}`}>
       <BackgroundHearts />
       <div className={`pointer-events-none absolute inset-0 ${overlayClass}`} />
       <div className={`pointer-events-none absolute inset-0 ${glowClass}`} />
       {showLiveHearts ? <IntroLiveHearts /> : null}
-      <div className={`relative mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-sm flex-col rounded-[2.15rem] border border-white/72 p-4 backdrop-blur-xl ${shellClass}`}>
+      <div className={`relative mx-auto flex min-h-[calc(100svh-2rem)] w-full max-w-[30rem] flex-col rounded-[1.9rem] border border-white/72 p-4 backdrop-blur-xl sm:min-h-[calc(100svh-3rem)] sm:rounded-[2.15rem] sm:p-5 ${shellClass}`}>
         <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[2.15rem]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(255,255,255,0.26),transparent_20%),radial-gradient(circle_at_82%_14%,rgba(255,233,245,0.2),transparent_18%),radial-gradient(circle_at_76%_82%,rgba(198,222,255,0.16),transparent_20%)]" />
         </div>
-        <div className="relative mb-4 flex items-center justify-center">
+        <div className="relative mb-4 grid grid-cols-[auto_1fr_auto] items-center gap-2">
           <button
             type="button"
             onClick={onBack}
             disabled={!onBack}
-            className={`absolute left-0 rounded-full px-3 py-1.5 text-xs font-medium transition ${onBack ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(248,241,252,0.92)_100%)] text-[#756990] shadow-sm hover:bg-white" : "cursor-default opacity-0"}`}
+            className={`rounded-full px-2.5 py-1.5 text-[0.7rem] font-medium transition sm:px-3 sm:text-xs ${onBack ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(248,241,252,0.92)_100%)] text-[#756990] shadow-sm hover:bg-white" : "pointer-events-none opacity-0"}`}
             aria-label={t.back}
           >
             {t.back}
           </button>
-          {showLanguageToggle ? (
-            <LanguageToggle
-              language={language}
-              onChange={onLanguageChange}
-              tamilLabel={t.languageTamil}
-              englishLabel={t.languageEnglish}
-            />
-          ) : (
-            <div className="w-[122px]" />
-          )}
+          <div className="flex justify-center">
+            {showLanguageToggle ? (
+              <LanguageToggle
+                language={language}
+                onChange={onLanguageChange}
+                tamilLabel={t.languageTamil}
+                englishLabel={t.languageEnglish}
+              />
+            ) : (
+              <div className="w-[122px]" />
+            )}
+          </div>
+          <div className="justify-self-end rounded-full bg-[linear-gradient(180deg,#7f74b8,#655993)] px-2.5 py-1.5 text-[0.62rem] font-semibold text-white shadow-[0_10px_20px_rgba(110,102,170,0.22)] sm:px-3 sm:text-[0.65rem]">
+            {step}/{TOTAL_STEPS}
+          </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-3">
           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-[#d48cab]">{eyebrow}</p>
-          <span className="rounded-full bg-[linear-gradient(180deg,#c7b3f1,#8b79d0)] px-3 py-1 text-[0.7rem] font-medium text-white shadow-[0_8px_18px_rgba(145,132,206,0.22)]">{step}/{TOTAL_STEPS}</span>
+          <button
+            type="button"
+            onClick={onToggleAudio}
+            className="flex h-11 w-11 items-center justify-center rounded-full border-0 bg-white/88 p-2 pb-3 shadow-[0_8px_18px_rgba(110,102,170,0.14)]"
+            aria-label={isPlaying ? "Pause music" : "Play music"}
+          >
+            {isPlaying ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="6" y="5" width="4" height="14" rx="2" fill="#a86ad6"/><rect x="14" y="5" width="4" height="14" rx="2" fill="#a86ad6"/></svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 5v14l11-7L7 5z" fill="#a86ad6"/></svg>
+            )}
+          </button>
         </div>
-        <p className="mt-1 text-xs text-[#8b7f9d]">{t.appLabel}</p>
-        <ProgressDots step={step} totalSteps={TOTAL_STEPS} />
-        <div className="mb-6">
-          <h1 className="max-w-[14ch] text-3xl font-semibold leading-tight text-[#5b5078]">{title}</h1>
+        <div className="mt-1">
+          <p className="text-[0.7rem] leading-none text-[#8b7f9d]">{t.appLabel}</p>
+        </div>
+        <div className="mt-2">
+          <ProgressDots step={step} totalSteps={TOTAL_STEPS} />
+        </div>
+        <div className="mb-5 sm:mb-6">
+          <h1 className="max-w-[16ch] text-[clamp(1.7rem,4vw,2rem)] font-semibold leading-tight text-[#5b5078]">{title}</h1>
           <span className="sr-only">{description}</span>
         </div>
         <div className="relative z-20 flex-1">{children}</div>
@@ -505,17 +552,17 @@ function MobileShell({ step, eyebrow, title, description, children, onBack, lang
   );
 }
 
-function IntroScreen({ onNext, language, onLanguageChange }: { onNext: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
+function IntroScreen({ onNext, language, onLanguageChange, isPlaying, onToggleAudio }: { onNext: () => void; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
   const t = getActiveCopy(language);
-  return <ReferenceBirthdayIntro copy={t} language={language} onLanguageChange={onLanguageChange} onOpen={onNext} />;
+  return <ReferenceBirthdayIntro copy={t} language={language} onLanguageChange={onLanguageChange} onOpen={onNext} isPlaying={isPlaying} onToggleAudio={onToggleAudio} />;
 }
 
-function LetterFormScreen({ onNext, onBack, fromValue, setFromValue, loveValue, setLoveValue, language, onLanguageChange }: { onNext: () => void; onBack: () => void; fromValue: string; setFromValue: (value: string) => void; loveValue: string; setLoveValue: (value: string) => void; language: Language; onLanguageChange: (language: Language) => void }) {
+function LetterFormScreen({ onNext, onBack, fromValue, setFromValue, loveValue, setLoveValue, language, onLanguageChange, isPlaying, onToggleAudio }: { onNext: () => void; onBack: () => void; fromValue: string; setFromValue: (value: string) => void; loveValue: string; setLoveValue: (value: string) => void; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
   const t = getActiveCopy(language);
-  return <MobileShell step={2} eyebrow={t.letterEyebrow} title={t.letterTitle} description={t.letterDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} showLiveHearts><div className="flex h-full flex-col gap-4"><div className="dream-card-soft letter-paper rounded-[1.95rem] p-5"><div className="mb-4 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p><span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span></div><p className="text-base leading-7 text-[#645875]">{t.letterText}</p><div className="mt-5 space-y-4"><input type="text" placeholder={t.fromPlaceholder} value={fromValue} onChange={(event) => setFromValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /><input type="text" placeholder={t.linePlaceholder} value={loveValue} onChange={(event) => setLoveValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /></div><div className="dream-card-soft mt-5 rounded-[1.35rem] p-3 text-sm leading-6 text-[#6d627f]">{t.previewPrefix} {fromValue || t.previewFallbackName} {t.previewMiddle} &ldquo;{loveValue || t.previewFallbackLine}&rdquo;</div></div><PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" /></div></MobileShell>;
+  return <MobileShell step={2} eyebrow={t.letterEyebrow} title={t.letterTitle} description={t.letterDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} isPlaying={isPlaying} onToggleAudio={onToggleAudio} showLiveHearts><div className="flex h-full flex-col gap-4"><div className="dream-card-soft letter-paper rounded-[1.95rem] p-5"><div className="mb-4 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p><span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span></div><p className="text-base leading-7 text-[#645875]">{t.letterText}</p><div className="mt-5 space-y-4"><input type="text" placeholder={t.fromPlaceholder} value={fromValue} onChange={(event) => setFromValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /><input type="text" placeholder={t.linePlaceholder} value={loveValue} onChange={(event) => setLoveValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /></div><div className="dream-card-soft mt-5 rounded-[1.35rem] p-3 text-sm leading-6 text-[#6d627f]">{t.previewPrefix} {fromValue || t.previewFallbackName} {t.previewMiddle} &ldquo;{loveValue || t.previewFallbackLine}&rdquo;</div></div><PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" /></div></MobileShell>;
 }
 
-function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, onLanguageChange }: { onNext: () => void; onBack: () => void; fromValue: string; loveValue: string; language: Language; onLanguageChange: (language: Language) => void }) {
+function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, onLanguageChange, isPlaying, onToggleAudio }: { onNext: () => void; onBack: () => void; fromValue: string; loveValue: string; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
   const [opened, setOpened] = useState(false);
   const t = getActiveCopy(language);
   const longLetter = language === "ta"
@@ -526,7 +573,9 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
         loveValue || "நீ என் வாழ்க்கையை இன்னும் இனிமையாகவும் அழகாகவும் அர்த்தமுள்ளதாகவும் மாற்றுகிறாய்.",
         `எப்போதும் அன்புடன், ${fromValue || "உன்னை ஆழமாக நேசிக்கும் ஒருவர்"}.`,
       ]
-    : getLongLetter(language, fromValue, loveValue);
+    : getPoemLetter(language, fromValue, loveValue);
+  const displayLetter = getPoemLetter(language, fromValue, loveValue);
+  void longLetter;
   const ornamentHearts = [
     { left: "11%", top: "28%", delay: "0s", size: "text-sm" },
     { left: "16%", bottom: "23%", delay: "1s", size: "text-[0.8rem]" },
@@ -554,6 +603,8 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
       onBack={onBack}
       language={language}
       onLanguageChange={onLanguageChange}
+      isPlaying={isPlaying}
+      onToggleAudio={onToggleAudio}
       showLiveHearts={!opened}
     >
       <div className="flex h-full flex-col">
@@ -571,7 +622,7 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
               <div className="letter-paper relative z-10 mt-4 flex-1 rounded-[1.8rem] p-5">
                 <p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p>
               <div className="mt-4 space-y-4 overflow-y-auto pr-1 text-[0.95rem] leading-7 text-[#645875]">
-                {longLetter.map((paragraph) => (
+                {displayLetter.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
@@ -647,7 +698,7 @@ function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, 
   );
 }
 
-function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
+function ExploreScreen({ onNext, onBack, language, onLanguageChange, isPlaying, onToggleAudio }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
 
   const t = getActiveCopy(language);
   const [activePhoto, setActivePhoto] = useState(1);
@@ -685,10 +736,12 @@ function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext:
       onBack={onBack}
       language={language}
       onLanguageChange={onLanguageChange}
+      isPlaying={isPlaying}
+      onToggleAudio={onToggleAudio}
     >
       <div className="flex h-full flex-col gap-4">
-        <div className="dream-card-soft relative overflow-hidden rounded-[2rem] p-4">
-          <div className="relative mx-auto h-64 w-full max-w-[14.2rem]">
+          <div className="dream-card-soft relative overflow-hidden rounded-[2rem] p-4">
+          <div className="relative mx-auto aspect-[10/13] w-full max-w-[16rem] sm:max-w-[18rem]">
             {memorySlides.map((slide, index) => (
               <div
                 key={slide.src}
@@ -716,18 +769,18 @@ function ExploreScreen({ onNext, onBack, language, onLanguageChange }: { onNext:
   );
 }
 
-function GiftRevealScreen({ onNext, onBack, language, onLanguageChange }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void }) {
+function GiftRevealScreen({ onNext, onBack, language, onLanguageChange, isPlaying, onToggleAudio }: { onNext: () => void; onBack: () => void; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
   const t = getActiveCopy(language);
   const [revealedCards, setRevealedCards] = useState<boolean[]>(() => Array.from({ length: 10 }, () => false));
   const rewards = language === "ta"
     ? ["காலை காபி சந்திப்பு", "நீண்ட பயணம்", "திரைப்பட இரவு", "ரகசிய பரிசு", "காதல் குறிப்பு", "பிடித்த இரவு உணவு", "இரவு நடை", "அணைப்பு சீட்டு", "ஆச்சரிய திட்டம்", "முத்தம் சீட்டு"]
     : getScratchRewards(language);
-  return <MobileShell step={5} eyebrow={t.giftEyebrow} title={t.giftTitle} description={t.giftDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="shine-card dream-card-deep rounded-[2rem] p-5 text-white"><p className="text-xs uppercase tracking-[0.35em] text-white/75">{t.mysteryBox}</p><p className="mt-4 text-3xl font-semibold tracking-tight">10</p><p className="mt-2 text-sm leading-6 text-white/85">{t.mysteryText}</p></div><div className="grid grid-cols-2 gap-3">{rewards.map((reward, index) => <ScratchCard key={reward} label={reward} revealed={revealedCards[index]} language={language} onReveal={() => setRevealedCards((current) => current.map((item, currentIndex) => currentIndex === index ? true : item))} />)}</div><PrimaryButton label={t.openFinal} onClick={onNext} /></div></MobileShell>;
+  return <MobileShell step={5} eyebrow={t.giftEyebrow} title={t.giftTitle} description={t.giftDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} isPlaying={isPlaying} onToggleAudio={onToggleAudio}><div className="flex h-full flex-col gap-4"><div className="shine-card dream-card-deep rounded-[2rem] p-5 text-white"><p className="text-xs uppercase tracking-[0.35em] text-white/75">{t.mysteryBox}</p><p className="mt-4 text-3xl font-semibold tracking-tight">10</p><p className="mt-2 text-sm leading-6 text-white/85">{t.mysteryText}</p></div><div className="grid grid-cols-2 gap-3">{rewards.map((reward, index) => <ScratchCard key={reward} label={reward} revealed={revealedCards[index]} language={language} onReveal={() => setRevealedCards((current) => current.map((item, currentIndex) => currentIndex === index ? true : item))} />)}</div><PrimaryButton label={t.openFinal} onClick={onNext} /></div></MobileShell>;
 }
 
-function FinalScreen({ onBack, fromValue, language, onLanguageChange }: { onBack: () => void; fromValue: string; language: Language; onLanguageChange: (language: Language) => void }) {
+function FinalScreen({ onBack, fromValue, language, onLanguageChange, isPlaying, onToggleAudio }: { onBack: () => void; fromValue: string; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
   const t = getActiveCopy(language);
-  return <MobileShell step={6} eyebrow={t.finalEyebrow} title={t.finalTitle} description={t.finalDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft rounded-[2rem] p-5"><p className="text-xs uppercase tracking-[0.35em] text-[#d48cab]">{t.closingNote}</p><p className="mt-4 text-xl font-semibold leading-tight text-[#5f5472]">{t.closingText1}</p><p className="mt-4 text-sm leading-7 text-[#786d8b]">{t.closingText2}</p></div><div className="dream-card-deep rounded-[1.6rem] px-4 py-5 text-center text-white"><p className="text-xs uppercase tracking-[0.35em] text-white/65">{t.fromLabel}</p><p className="mt-2 text-lg font-semibold">{fromValue || t.fromFallback}</p></div><PrimaryButton label={t.replay} onClick={() => window.location.reload()} tone="light" /></div></MobileShell>;
+  return <MobileShell step={6} eyebrow={t.finalEyebrow} title={t.finalTitle} description={t.finalDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} isPlaying={isPlaying} onToggleAudio={onToggleAudio}><div className="flex h-full flex-col gap-4"><div className="dream-card-soft rounded-[2rem] p-5"><p className="text-xs uppercase tracking-[0.35em] text-[#d48cab]">{t.closingNote}</p><p className="mt-4 text-xl font-semibold leading-tight text-[#5f5472]">{t.closingText1}</p><p className="mt-4 text-sm leading-7 text-[#786d8b]">{t.closingText2}</p></div><div className="dream-card-deep rounded-[1.6rem] px-4 py-5 text-center text-white"><p className="text-xs uppercase tracking-[0.35em] text-white/65">{t.fromLabel}</p><p className="mt-2 text-lg font-semibold">{fromValue || t.fromFallback}</p></div><PrimaryButton label={t.replay} onClick={() => window.location.reload()} tone="light" /></div></MobileShell>;
 }
 
 export default function Page() {
@@ -766,45 +819,17 @@ export default function Page() {
   }, []);
 
   return (
-    <div
-      style={{
-        position: "relative",
-        minHeight: "100vh",
-        width: "100vw",
-        maxWidth: "100vw",
-        overflowX: "hidden",
-        overflowY: "auto",
-        margin: 0,
-        padding: 0,
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        background: "#f8f3fa"
-      }}
-    >
-      {/* Play/Pause button at top right */}
-      <button
-        onClick={toggleAudio}
-        style={{ position: "absolute", top: 21, left: 24, zIndex: 50, background: "rgba(255,255,255,0.85)", borderRadius: "50%", border: "none", width: 48, height: 48, padding: 8, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
-        aria-label={isPlaying ? "Pause music" : "Play music"}
-      >
-        {isPlaying ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="6" y="5" width="4" height="14" rx="2" fill="#a86ad6"/><rect x="14" y="5" width="4" height="14" rx="2" fill="#a86ad6"/></svg>
-        ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 5v14l11-7L7 5z" fill="#a86ad6"/></svg>
-        )}
-      </button>
+    <div className="app-frame flex flex-col items-center bg-[#f8f3fa]">
       {/* Background audio element */}
       <audio ref={audioRef} src="/audio/birthday-song.mpeg" loop preload="auto" />
       <AppClouds />
-      <div style={{ width: "100%", maxWidth: 430, minHeight: "100vh", margin: "0 auto", padding: "0 0 32px 0", boxSizing: "border-box", background: "#fff", borderRadius: 24, boxShadow: "0 2px 16px rgba(168,106,214,0.07)" }}>
-        {screen === 0 && <IntroScreen onNext={() => setScreen(1)} language={language} onLanguageChange={setLanguage} />}
-        {screen === 1 && <LetterFormScreen onNext={() => setScreen(2)} onBack={() => setScreen(0)} fromValue={fromValue} setFromValue={setFromValue} loveValue={loveValue} setLoveValue={setLoveValue} language={language} onLanguageChange={setLanguage} />}
-        {screen === 2 && <EnvelopeRevealScreen onNext={() => setScreen(3)} onBack={() => setScreen(1)} fromValue={fromValue} loveValue={loveValue} language={language} onLanguageChange={setLanguage} />}
-        {screen === 3 && <ExploreScreen onNext={() => setScreen(4)} onBack={() => setScreen(2)} language={language} onLanguageChange={setLanguage} />}
-        {screen === 4 && <GiftRevealScreen onNext={() => setScreen(5)} onBack={() => setScreen(3)} language={language} onLanguageChange={setLanguage} />}
-        {screen === 5 && <FinalScreen onBack={() => setScreen(4)} fromValue={fromValue} language={language} onLanguageChange={setLanguage} />}
+      <div className="app-stage bg-white shadow-[0_2px_16px_rgba(168,106,214,0.07)]">
+        {screen === 0 && <IntroScreen onNext={() => setScreen(1)} language={language} onLanguageChange={setLanguage} isPlaying={isPlaying} onToggleAudio={toggleAudio} />}
+        {screen === 1 && <LetterFormScreen onNext={() => setScreen(2)} onBack={() => setScreen(0)} fromValue={fromValue} setFromValue={setFromValue} loveValue={loveValue} setLoveValue={setLoveValue} language={language} onLanguageChange={setLanguage} isPlaying={isPlaying} onToggleAudio={toggleAudio} />}
+        {screen === 2 && <EnvelopeRevealScreen onNext={() => setScreen(3)} onBack={() => setScreen(1)} fromValue={fromValue} loveValue={loveValue} language={language} onLanguageChange={setLanguage} isPlaying={isPlaying} onToggleAudio={toggleAudio} />}
+        {screen === 3 && <ExploreScreen onNext={() => setScreen(4)} onBack={() => setScreen(2)} language={language} onLanguageChange={setLanguage} isPlaying={isPlaying} onToggleAudio={toggleAudio} />}
+        {screen === 4 && <GiftRevealScreen onNext={() => setScreen(5)} onBack={() => setScreen(3)} language={language} onLanguageChange={setLanguage} isPlaying={isPlaying} onToggleAudio={toggleAudio} />}
+        {screen === 5 && <FinalScreen onBack={() => setScreen(4)} fromValue={fromValue} language={language} onLanguageChange={setLanguage} isPlaying={isPlaying} onToggleAudio={toggleAudio} />}
       </div>
     </div>
   );
