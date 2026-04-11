@@ -46,8 +46,30 @@ function getLongLetter(language: Language, fromValue: string, loveValue: string)
 
 function getScratchRewards(language: Language) {
   return language === "ta"
-    ? ["லவ் கிஃப்ட்", "சேலை", "ஹேர் கிளிப்", "நெக் செயின்", "ப்யூட்டி கிட்ட்", "அணைப்பு", "முத்தம்", "காதல் கடிதம்"]
-    : ["Love Gift", "Saree", "Hair Clip", "Neck Chain", "Face kit", "Hug", "Kiss", "Love Letter"];
+    ? [
+        "காதல் கடிதம்",
+        "காதல் பரிசு",
+        "முடி கிளிப்",
+        "கழுத்துச் சங்கிலி",
+        "முக அழகு தொகுப்பு",
+        "சேலை",
+        "இனிய அதிர்ச்சி பரிசு",
+        "இனிய காபி சந்திப்பு",
+        "அன்பான அணைப்புகள்",
+        "இனிய முத்தங்கள்"
+      ]
+    : [
+        "Love Letter",
+        "Love Gift",
+        "Hair Clip",
+        "Neck Chain",
+        "Face Kit",
+        "Saree",
+        "Suprise Gift",
+        "Coffee Day",
+        "Lots of Hug",
+        "Lots of Kiss"
+      ];
 }
 
 function getPoemLetter(language: Language, fromValue: string, loveValue: string) {
@@ -273,7 +295,7 @@ const pureTamilCopy: Copy = {
     "சாதாரண தருணங்களைக் கூட சிறப்பாக மாற்றும் உன் இருப்பு",
   ],
   memoryText: "பிறகு இதை நம் உண்மையான நினைவுகள், புகைப்படங்கள், சிறு கதைகள் ஆகியவையாக மாற்றலாம்.",
-  coupons: ["திரைப்பட இரவு", "இரவு உணவு சந்திப்பு", "நீண்ட பயணம்", "ரகசிய பரிசு"],
+  coupons: ["முடி கிளிப்", "இரவு உணவு சந்திப்பு", "காதல் பரிசு", "கழுத்துச் சங்கிலி"],
   languageTamil: "தமிழ்",
   languageEnglish: "English",
   openEnvelopeAria: "உறையைத் திற",
@@ -770,7 +792,7 @@ function GiftRevealScreen({ onNext, onBack, language, onLanguageChange, isPlayin
   const t = getActiveCopy(language);
   const [revealedCards, setRevealedCards] = useState<boolean[]>(() => Array.from({ length: 10 }, () => false));
   const rewards = language === "ta"
-    ? ["காலை காபி சந்திப்பு", "நீண்ட பயணம்", "திரைப்பட இரவு", "ரகசிய பரிசு", "காதல் குறிப்பு", "பிடித்த இரவு உணவு", "இரவு நடை", "அணைப்பு சீட்டு", "ஆச்சரிய திட்டம்", "முத்தம் சீட்டு"]
+    ? ["காதல் கடிதம்", "காதல் பரிசு", "முடி கிளிப்", "கழுத்துச் சங்கிலி", "முக அழகு தொகுப்பு", "சேலை", "இனிய அதிர்ச்சி பரிசு", "இனிய காபி சந்திப்பு", "அன்பான அணைப்புகள்", "இனிய முத்தங்கள்"]
     : getScratchRewards(language);
   return <MobileShell step={5} eyebrow={t.giftEyebrow} title={t.giftTitle} description={t.giftDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} isPlaying={isPlaying} onToggleAudio={onToggleAudio}><div className="flex h-full flex-col gap-4"><div className="shine-card dream-card-deep rounded-[2rem] p-5 text-white"><p className="text-xs uppercase tracking-[0.35em] text-white/75">{t.mysteryBox}</p><p className="mt-4 text-3xl font-semibold tracking-tight">10</p><p className="mt-2 text-sm leading-6 text-white/85">{t.mysteryText}</p></div><div className="grid grid-cols-2 gap-3">{rewards.map((reward, index) => <ScratchCard key={reward} label={reward} revealed={revealedCards[index]} language={language} onReveal={() => setRevealedCards((current) => current.map((item, currentIndex) => currentIndex === index ? true : item))} />)}</div><PrimaryButton label={t.openFinal} onClick={onNext} /></div></MobileShell>;
 }
