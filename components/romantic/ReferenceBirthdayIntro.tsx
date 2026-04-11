@@ -340,9 +340,23 @@ export function ReferenceBirthdayIntro({ copy, language, onLanguageChange, onOpe
             <span key={index} className={`h-1.5 flex-1 rounded-full ${index === 0 ? "bg-[linear-gradient(90deg,#f08db0,#f0b0c4)]" : "bg-white/75"}`} />
           ))}
         </motion.div>
-        <motion.h1 {...fadeMotion(0.18)} className="relative z-10 max-w-[10ch] break-words text-[clamp(1.75rem,5.2vw,2.4rem)] font-bold leading-[1.02] tracking-[-0.05em] text-[#5b5078]">
-          {copy.introTitle}
-        </motion.h1>
+        {language === "ta" ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-8 w-full">
+            {copy.introTitle.split(/\n|\.\.\.|\.|\!|\?/).filter(Boolean).map((line, idx, arr) =>
+              <span
+                key={idx}
+                className="break-words text-[clamp(1.3rem,3vw,2.1rem)] font-bold tracking-[-0.01em] text-[#5b5078] text-left whitespace-pre-line"
+                style={{ gridColumn: arr.length === 1 ? 'span 2' : undefined }}
+              >
+                {line.trim()}
+              </span>
+            )}
+          </div>
+        ) : (
+          <motion.h1 {...fadeMotion(0.18)} className="relative z-10 max-w-[10ch] break-words text-[clamp(1.75rem,5.2vw,2.4rem)] font-bold leading-[1.02] tracking-[-0.05em] text-[#5b5078]">
+            {copy.introTitle}
+          </motion.h1>
+        )}
         <div className="mt-6 space-y-5">
           <LetterCard copy={copy} />
           <EnvelopeCard onOpen={onOpen} ariaLabel={copy.openEnvelopeAria} />
