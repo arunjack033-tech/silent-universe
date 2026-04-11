@@ -252,7 +252,7 @@ const pureTamilCopy: Copy = {
   upgradeText: "பிறகு இதை நம் உண்மையான புகைப்படங்களும் நினைவுகளும் சேர்த்து இன்னும் அழகாக மாற்றலாம்.",
   revealSurprise: "ஆச்சரியத்தைத் திற",
   giftEyebrow: "பரிசு திறப்பு",
-  giftTitle: "இந்த ஆச்சரிய பகுதி இப்போது இன்னும் மென்மையாகவும் அழகாகவும் தெரிகிறது.",
+  giftTitle: "உனக்காக சேமித்து வைத்த இனிய நினைவுகளின் தொடக்கம் இது.",
   giftDescription: "இந்த பரிசு பகுதியை பிறந்தநாள் காதல் உணர்வுக்கு பொருத்தமாக வைத்திருக்கிறேன்.",
   mysteryBox: "ரகசிய பெட்டி",
   mysteryText: "என் காதல் உன் உள்ளத்தை மேலும் அழகாக்கும். இந்த பரிசுகள் என் இனிய நினைவுகளை உன்னிடம் சேர்த்திடும். இந்த பரிசுகள் சிறியதாக தோன்றலாம்,ஆனால் என் காதல் உன் கற்பனைக்கும் எட்டாத அளவிற்கு ஆழமானது...",
@@ -709,10 +709,7 @@ function ExploreScreen({ onNext, onBack, language, onLanguageChange, isPlaying, 
     return {
       src: `/memory-${num}.jpeg`,
       alt: `Memory photo ${num}`,
-      message:
-        language === "ta"
-          ? `நினைவுகள் படம் ${num}`
-          : `Memory photo ${num}`,
+      message: "",
     };
   });
 
