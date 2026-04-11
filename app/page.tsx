@@ -581,7 +581,63 @@ function IntroScreen({ onNext, language, onLanguageChange, isPlaying, onToggleAu
 
 function LetterFormScreen({ onNext, onBack, fromValue, setFromValue, loveValue, setLoveValue, language, onLanguageChange, isPlaying, onToggleAudio }: { onNext: () => void; onBack: () => void; fromValue: string; setFromValue: (value: string) => void; loveValue: string; setLoveValue: (value: string) => void; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
   const t = getActiveCopy(language);
-  return <MobileShell step={2} eyebrow={t.letterEyebrow} title={t.letterTitle} description={t.letterDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} isPlaying={isPlaying} onToggleAudio={onToggleAudio} showLiveHearts><div className="flex h-full flex-col gap-4"><div className="dream-card-soft letter-paper rounded-[1.95rem] p-5"><div className="mb-4 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p><span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span></div><p className="text-base leading-7 text-[#645875]">{t.letterText}</p><div className="mt-5 space-y-4"><input type="text" placeholder={t.fromPlaceholder} value={fromValue} onChange={(event) => setFromValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /><input type="text" placeholder={t.linePlaceholder} value={loveValue} onChange={(event) => setLoveValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" /></div><div className="dream-card-soft mt-5 rounded-[1.35rem] p-3 text-sm leading-6 text-[#6d627f]">{t.previewPrefix} {fromValue || t.previewFallbackName} {t.previewMiddle} &ldquo;{loveValue || t.previewFallbackLine}&rdquo;</div></div><PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" /></div></MobileShell>;
+  return (
+    <MobileShell
+      step={2}
+      eyebrow={t.letterEyebrow}
+      title={t.letterTitle}
+      description={t.letterDescription}
+      onBack={onBack}
+      language={language}
+      onLanguageChange={onLanguageChange}
+      isPlaying={isPlaying}
+      onToggleAudio={onToggleAudio}
+      showLiveHearts
+    >
+      <div className="flex h-full flex-col gap-4">
+        <div className="dream-card-soft letter-paper rounded-[1.95rem] p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p>
+            <span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span>
+          </div>
+          <p className="text-base leading-7 text-[#645875]">{t.letterText}</p>
+          <div className="mt-5 space-y-4">
+            <input
+              type="text"
+              placeholder={t.fromPlaceholder}
+              value={fromValue}
+              onChange={(event) => setFromValue(event.target.value)}
+              className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none"
+            />
+            <input
+              type="text"
+              placeholder={t.linePlaceholder}
+              value={loveValue}
+              onChange={(event) => setLoveValue(event.target.value)}
+              className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none"
+            />
+          </div>
+        </div>
+        <PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" />
+      </div>
+    </MobileShell>
+  );
+  return <MobileShell step={2} eyebrow={t.letterEyebrow} title={t.letterTitle} description={t.letterDescription} onBack={onBack} language={language} onLanguageChange={onLanguageChange} isPlaying={isPlaying} onToggleAudio={onToggleAudio} showLiveHearts>
+    <div className="flex h-full flex-col gap-4">
+      <div className="dream-card-soft letter-paper rounded-[1.95rem] p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#8f79ab]">{t.letterTo}</p>
+          <span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#c57da0]">{t.letterPrivate}</span>
+        </div>
+        <p className="text-base leading-7 text-[#645875]">{t.letterText}</p>
+        <div className="mt-5 space-y-4">
+          <input type="text" placeholder={t.fromPlaceholder} value={fromValue} onChange={(event) => setFromValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" />
+          <input type="text" placeholder={t.linePlaceholder} value={loveValue} onChange={(event) => setLoveValue(event.target.value)} className="w-full border-b border-[#d8cfe7] bg-transparent px-1 py-2 text-sm outline-none" />
+        </div>
+      </div>
+      <PrimaryButton label={t.continueLove} onClick={onNext} tone="rose" />
+    </div>
+  </MobileShell>;
 }
 
 function EnvelopeRevealScreen({ onNext, onBack, fromValue, loveValue, language, onLanguageChange, isPlaying, onToggleAudio }: { onNext: () => void; onBack: () => void; fromValue: string; loveValue: string; language: Language; onLanguageChange: (language: Language) => void; isPlaying: boolean; onToggleAudio: () => void }) {
